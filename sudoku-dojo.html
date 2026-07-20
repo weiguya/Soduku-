@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="th" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#F6F2E7">
+<title>Sudoku Dojo — ฝึกเทคนิคซูโดกุ</title>
+<style>
+/* ============ Design tokens: "สมุดโน้ตนักไข" ============ */
+:root{
+  --paper:#F6F2E7; --paper-2:#EFE9DA; --card:#FFFDF6;
+  --ink:#1E2A44; --ink-soft:#5A6784; --line:#C9C2AF;
+  --pen:#2B5BD7; --pen-soft:#DCE5FB;
+  --green:#7BCF7B; --green-soft:#DFF3DD;
+  --red:#D24545; --red-soft:#F8E0DE;
+  --amber:#F5C84C; --amber-soft:#FBEFC9;
+  --shadow:0 2px 10px rgba(30,42,68,.10);
+  --r:14px;
+}
+[data-theme="dark"]{
+  --paper:#101726; --paper-2:#0B111D; --card:#182136;
+  --ink:#EAEFFB; --ink-soft:#93A0BE; --line:#2C3A57;
+  --pen:#7FA3FF; --pen-soft:#22335C;
+  --green:#5FBF6E; --green-soft:#1D3A28;
+  --red:#F07B72; --red-soft:#472323;
+  --amber:#F0C860; --amber-soft:#3E3419;
+  --shadow:0 2px 12px rgba(0,0,0,.45);
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+html,body{margin:0; padding:0}
+body{
+  font-family:"Noto Sans Thai","Sukhumvit Set","Segoe UI",system-ui,-apple-system,sans-serif;
+  background:var(--paper); color:var(--ink);
+  min-height:100dvh; overscroll-behavior:none;
+  font-size:16px; line-height:1.5;
+  padding-bottom:env(safe-area-inset-bottom);
+}
+button{font:inherit; color:inherit; border:0; background:none; cursor:pointer}
+h1,h2,h3{margin:0; line-height:1.25}
+.screen{display:none; max-width:480px; margin:0 auto; padding:14px 16px 40px}
+.screen.on{display:block; animation:fadeUp .25s ease}
+@keyframes fadeUp{from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:none}}
+
+/* ============ Top bar ============ */
+.topbar{display:flex; align-items:center; gap:10px; padding:10px 4px 14px}
+.topbar .back{width:40px; height:40px; border-radius:12px; background:var(--card); box-shadow:var(--shadow); font-size:18px; display:grid; place-items:center}
+.topbar .title{flex:1; font-weight:700; font-size:17px}
+.topbar .iconbtn{width:40px; height:40px; border-radius:12px; background:var(--card); box-shadow:var(--shadow); font-size:18px; display:grid; place-items:center}
+
+/* ============ Home ============ */
+.hero{padding:26px 4px 18px}
+.hero .kicker{color:var(--pen); font-weight:700; letter-spacing:.14em; font-size:12px; text-transform:uppercase}
+.hero h1{font-size:34px; font-weight:800; margin-top:4px}
+.hero p{color:var(--ink-soft); margin:8px 0 0; font-size:14.5px}
+.streakline{display:flex; gap:8px; align-items:center; margin-top:14px; font-size:14px; color:var(--ink-soft)}
+.streakline b{color:var(--ink)}
+.modes{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:18px}
+.mode{background:var(--card); border-radius:var(--r); box-shadow:var(--shadow); padding:16px 14px; text-align:left; transition:transform .12s ease}
+.mode:active{transform:scale(.97)}
+.mode .em{font-size:26px}
+.mode .nm{font-weight:700; margin-top:8px; font-size:15.5px}
+.mode .ds{color:var(--ink-soft); font-size:12.5px; margin-top:2px}
+.mode.wide{grid-column:1/-1; display:flex; align-items:center; gap:14px; background:linear-gradient(120deg,var(--pen-soft),var(--card) 70%)}
+.mode.wide .em{font-size:34px}
+.mode.wide .prog{margin-left:auto; text-align:right; font-size:12.5px; color:var(--ink-soft)}
+.mode.wide .prog b{display:block; font-size:20px; color:var(--pen)}
+
+/* ============ Library ============ */
+.tierhead{display:flex; align-items:center; gap:8px; margin:22px 4px 10px; font-size:13px; font-weight:800; letter-spacing:.08em; color:var(--ink-soft); text-transform:uppercase}
+.tierhead .dot{width:10px; height:10px; border-radius:50%}
+.scnlist{display:flex; flex-direction:column; gap:10px}
+.scn{background:var(--card); border-radius:var(--r); box-shadow:var(--shadow); padding:14px; display:flex; align-items:center; gap:12px; text-align:left; transition:transform .12s}
+.scn:active{transform:scale(.98)}
+.scn .badge{width:44px; height:44px; border-radius:12px; display:grid; place-items:center; font-weight:800; font-size:15px; flex-shrink:0}
+.scn .tx{flex:1; min-width:0}
+.scn .tech{font-weight:700; font-size:15.5px}
+.scn .th{color:var(--ink-soft); font-size:12.5px}
+.scn .stars{font-size:13px; letter-spacing:1px; flex-shrink:0}
+
+/* ============ Play ============ */
+.taskcard{background:var(--card); border-radius:var(--r); box-shadow:var(--shadow); padding:14px 16px; margin-bottom:12px}
+.taskcard .tech{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
+.chip{font-size:11.5px; font-weight:700; padding:3px 10px; border-radius:999px; background:var(--pen-soft); color:var(--pen)}
+.chip.tier1{background:var(--green-soft); color:var(--green)} 
+.chip.tier2{background:var(--amber-soft); color:#B08A18}
+[data-theme="dark"] .chip.tier2{color:var(--amber)}
+.chip.tier3{background:var(--red-soft); color:var(--red)}
+.taskcard .q{font-size:17px; font-weight:800; margin-top:8px}
+.taskcard .note{font-size:12.5px; color:var(--ink-soft); margin-top:4px}
+
+/* board */
+.boardwrap{position:relative; width:min(92vw,430px); margin:0 auto}
+.board{
+  display:grid; grid-template-columns:repeat(9,1fr); grid-template-rows:repeat(9,1fr);
+  aspect-ratio:1/1; width:100%;
+  background:var(--card); border:2.5px solid var(--ink); border-radius:8px; overflow:hidden;
+  box-shadow:var(--shadow);
+  touch-action:manipulation;
+}
+.cell{
+  position:relative; border-right:1px solid var(--line); border-bottom:1px solid var(--line);
+  display:grid; place-items:center; user-select:none;
+  transition:background .18s ease;
+}
+.cell.bR{border-right:2.5px solid var(--ink)}
+.cell.bB{border-bottom:2.5px solid var(--ink)}
+.cell:nth-child(9n){border-right:0}
+.cell .big{font-size:clamp(18px,5.4vw,26px); font-weight:600; font-variant-numeric:tabular-nums}
+.cell.given .big{font-weight:800}
+.cell .cands{
+  position:absolute; inset:1px; display:grid;
+  grid-template-columns:repeat(3,1fr); grid-template-rows:repeat(3,1fr);
+}
+.cell .cands span{
+  display:grid; place-items:center; font-size:clamp(8px,2.5vw,11.5px);
+  color:var(--ink-soft); font-weight:600; border-radius:4px;
+  transition:opacity .4s ease, transform .4s ease, background .2s, color .2s;
+}
+/* highlight states — "ปากกาเน้นข้อความ" look */
+.cell.hl-house{background:color-mix(in srgb, var(--amber) 22%, transparent)}
+.cell.hl-cell{background:color-mix(in srgb, var(--pen) 20%, transparent)}
+.cell.target{background:color-mix(in srgb, var(--green) 45%, transparent)}
+.cell.sel{outline:3px solid var(--pen); outline-offset:-3px; z-index:2; border-radius:4px}
+.cell.wrongflash{animation:shake .4s ease}
+.cell.okflash{animation:pop .5s ease}
+.cell .cands span.keycand{background:var(--pen); color:#fff}
+.cell .cands span.gone{opacity:0; transform:scale(.3)}
+.cell .cands span.dying{background:var(--red); color:#fff; animation:die .55s ease forwards}
+@keyframes shake{0%,100%{transform:none}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.12)}100%{transform:scale(1)}}
+@keyframes die{0%{transform:scale(1)}45%{transform:scale(1.25)}100%{opacity:0; transform:scale(.2)}}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--pen) 45%, transparent)}50%{box-shadow:0 0 0 7px transparent}}
+
+/* controls under board */
+.playctrl{display:flex; gap:10px; margin:14px auto 0; width:min(92vw,430px)}
+.pbtn{flex:1; background:var(--card); border-radius:var(--r); box-shadow:var(--shadow); padding:12px 8px; font-weight:700; font-size:14px; display:flex; flex-direction:column; align-items:center; gap:2px; transition:transform .12s}
+.pbtn:active{transform:scale(.96)}
+.pbtn .ic{font-size:19px}
+.pbtn.hint{background:linear-gradient(140deg,var(--amber-soft),var(--card))}
+.pbtn:disabled{opacity:.45}
+
+.coach{
+  display:flex; gap:10px; align-items:flex-start;
+  width:min(92vw,430px); margin:14px auto 0;
+  background:var(--card); border-left:4px solid var(--pen);
+  border-radius:12px; box-shadow:var(--shadow); padding:12px 14px;
+  font-size:14.5px; animation:fadeUp .25s ease;
+}
+.coach .av{font-size:22px; flex-shrink:0}
+.coach.err{border-left-color:var(--red); background:linear-gradient(120deg,var(--red-soft),var(--card) 60%)}
+.coach.ok{border-left-color:var(--green)}
+
+/* identify options */
+.opts{display:grid; grid-template-columns:1fr 1fr; gap:10px; width:min(92vw,430px); margin:14px auto 0}
+.opt{background:var(--card); border-radius:var(--r); box-shadow:var(--shadow); padding:14px 10px; font-weight:700; font-size:14.5px; transition:transform .12s}
+.opt:active{transform:scale(.96)}
+.opt.no{background:var(--red-soft); color:var(--red)}
+.opt.yes{background:var(--green-soft)}
+
+/* bottom sheet (numpad / candidate picker) */
+.sheetmask{position:fixed; inset:0; background:rgba(10,14,25,.4); opacity:0; pointer-events:none; transition:opacity .2s; z-index:50}
+.sheetmask.on{opacity:1; pointer-events:auto}
+.sheet{
+  position:fixed; left:0; right:0; bottom:0; z-index:51;
+  background:var(--card); border-radius:20px 20px 0 0; box-shadow:0 -6px 30px rgba(0,0,0,.25);
+  padding:16px 18px calc(20px + env(safe-area-inset-bottom));
+  transform:translateY(105%); transition:transform .26s cubic-bezier(.3,.9,.3,1);
+  max-width:480px; margin:0 auto;
+}
+.sheet.on{transform:none}
+.sheet h3{font-size:15px; margin-bottom:12px}
+.sheet .sub{font-size:12.5px; color:var(--ink-soft); font-weight:400}
+.numgrid{display:grid; grid-template-columns:repeat(5,1fr); gap:10px}
+.numgrid button{
+  aspect-ratio:1; border-radius:14px; background:var(--paper-2);
+  font-size:22px; font-weight:700; transition:transform .1s;
+}
+.numgrid button:active{transform:scale(.92); background:var(--pen-soft)}
+.numgrid button.strike{text-decoration:line-through; color:var(--ink-soft); opacity:.8}
+
+/* result sheet */
+.result .stars{font-size:34px; letter-spacing:6px; text-align:center; margin:6px 0 2px}
+.result .rname{text-align:center; font-weight:800; font-size:18px}
+.result .steps{margin:14px 0 0; padding:0; list-style:none; display:flex; flex-direction:column; gap:8px; max-height:38dvh; overflow:auto}
+.result .steps li{background:var(--paper-2); border-radius:10px; padding:10px 12px; font-size:14px; display:flex; gap:10px}
+.result .steps li .n{color:var(--pen); font-weight:800; flex-shrink:0}
+.result .takeaway{margin-top:12px; background:var(--green-soft); border-radius:10px; padding:10px 12px; font-size:14px}
+.result .actions{display:flex; gap:10px; margin-top:16px}
+.result .actions button{flex:1; padding:14px; border-radius:14px; font-weight:800; font-size:15px}
+.result .actions .next{background:var(--pen); color:#fff}
+.result .actions .again{background:var(--paper-2)}
+
+/* ============ Stats ============ */
+.statgrid{display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-top:6px}
+.stat{background:var(--card); border-radius:var(--r); box-shadow:var(--shadow); padding:14px 10px; text-align:center}
+.stat b{display:block; font-size:24px; color:var(--pen)}
+.stat span{font-size:12px; color:var(--ink-soft)}
+.barrow{display:flex; align-items:center; gap:10px; margin-top:10px; font-size:13px}
+.barrow .lb{width:118px; flex-shrink:0; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.barrow .bar{flex:1; height:12px; border-radius:99px; background:var(--paper-2); overflow:hidden}
+.barrow .bar i{display:block; height:100%; border-radius:99px; background:var(--pen); transition:width .6s ease}
+.barrow .pc{width:42px; text-align:right; color:var(--ink-soft); font-variant-numeric:tabular-nums}
+.card{background:var(--card); border-radius:var(--r); box-shadow:var(--shadow); padding:16px; margin-top:14px}
+.card h3{font-size:15px; margin-bottom:6px}
+.achv{display:flex; gap:10px; align-items:center; padding:9px 0; border-bottom:1px dashed var(--line); font-size:14px}
+.achv:last-child{border-bottom:0}
+.achv .em{font-size:22px; filter:grayscale(1); opacity:.4}
+.achv.got .em{filter:none; opacity:1}
+.achv .ds{color:var(--ink-soft); font-size:12px}
+.emptyhint{color:var(--ink-soft); font-size:13.5px; text-align:center; padding:20px 0}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms!important; transition-duration:.01ms!important}
+}
+</style>
+</head>
+<body>
+
+<!-- ============ HOME ============ -->
+<section class="screen on" id="scr-home">
+  <div class="topbar" style="justify-content:flex-end">
+    <button class="iconbtn" id="themeBtn" aria-label="สลับโหมดสี">🌙</button>
+  </div>
+  <div class="hero">
+    <div class="kicker">Sudoku Dojo</div>
+    <h1>ติดตรงไหน<br>ฝึกตรงนั้น</h1>
+    <p>โจทย์สถานการณ์จริงจากกระดานซูโดกุ — หน้าที่ของคุณคือหา "ตาเดินตรรกะถัดไป" ให้เจอ ไม่ต้องแก้ทั้งกระดาน</p>
+    <div class="streakline" id="streakline"></div>
+  </div>
+  <div class="modes">
+    <button class="mode wide" data-go="ladder">
+      <span class="em">🪜</span>
+      <span><span class="nm" style="display:block">ไต่ระดับ</span><span class="ds">เรียงจากพื้นฐานสู่ขั้นสูง</span></span>
+      <span class="prog"><b id="ladderProg">0/0</b>ผ่านแล้ว</span>
+    </button>
+    <button class="mode" data-go="library"><span class="em">📖</span><span class="nm">เลือกเทคนิค</span><span class="ds">ฝึกทีละเทคนิคที่อยากแม่น</span></button>
+    <button class="mode" data-go="random"><span class="em">🎲</span><span class="nm">สุ่มโจทย์</span><span class="ds">ไม่บอกเทคนิค — ดูออกไหม</span></button>
+    <button class="mode" data-go="weak"><span class="em">🎯</span><span class="nm">ซ้ำจุดอ่อน</span><span class="ds">ฝึกซ้ำเทคนิคที่พลาดบ่อย</span></button>
+    <button class="mode" data-go="stats"><span class="em">📊</span><span class="nm">สถิติ</span><span class="ds">ความแม่น &amp; ความสำเร็จ</span></button>
+  </div>
+</section>
+
+<!-- ============ LIBRARY ============ -->
+<section class="screen" id="scr-library">
+  <div class="topbar">
+    <button class="back" data-go="home">←</button>
+    <div class="title">คลังเทคนิค</div>
+  </div>
+  <div id="libList"></div>
+</section>
+
+<!-- ============ PLAY ============ -->
+<section class="screen" id="scr-play">
+  <div class="topbar">
+    <button class="back" id="quitBtn">←</button>
+    <div class="title" id="playTitle">โจทย์</div>
+    <button class="iconbtn" id="resetBtn" aria-label="เริ่มโจทย์ใหม่">↺</button>
+  </div>
+  <div class="taskcard">
+    <div class="tech" id="playChips"></div>
+    <div class="q" id="playQ"></div>
+    <div class="note" id="playNote"></div>
+  </div>
+  <div class="boardwrap"><div class="board" id="board"></div></div>
+  <div class="playctrl">
+    <button class="pbtn hint" id="hintBtn"><span class="ic">💡</span><span id="hintLbl">คำใบ้</span></button>
+  </div>
+  <div class="opts" id="optWrap" style="display:none"></div>
+  <div class="coach" id="coachBox" style="display:none"><span class="av">🧑‍🏫</span><span id="coachTx"></span></div>
+</section>
+
+<!-- ============ STATS ============ -->
+<section class="screen" id="scr-stats">
+  <div class="topbar">
+    <button class="back" data-go="home">←</button>
+    <div class="title">สถิติการฝึก</div>
+  </div>
+  <div class="statgrid">
+    <div class="stat"><b id="stSolved">0</b><span>ผ่านแล้ว</span></div>
+    <div class="stat"><b id="stAcc">–</b><span>ความแม่น</span></div>
+    <div class="stat"><b id="stStreak">0</b><span>สตรีคตอนนี้</span></div>
+  </div>
+  <div class="card">
+    <h3>ความแม่นรายเทคนิค</h3>
+    <div id="techBars"><div class="emptyhint">ยังไม่มีข้อมูล — ไปฝึกสักสองสามข้อก่อน</div></div>
+  </div>
+  <div class="card">
+    <h3>ความสำเร็จ</h3>
+    <div id="achvList"></div>
+  </div>
+</section>
+
+<!-- ============ SHEETS ============ -->
+<div class="sheetmask" id="sheetMask"></div>
+<div class="sheet" id="numSheet">
+  <h3 id="numTitle">เลือกตัวเลข</h3>
+  <div class="numgrid" id="numGrid"></div>
+</div>
+<div class="sheet" id="candSheet">
+  <h3>ตัวเลือกในช่องนี้ <span class="sub">— แตะตัวที่คิดว่า "ตัดออกได้"</span></h3>
+  <div class="numgrid" id="candGrid"></div>
+</div>
+<div class="sheet result" id="resultSheet">
+  <div class="stars" id="resStars"></div>
+  <div class="rname" id="resName"></div>
+  <ul class="steps" id="resSteps"></ul>
+  <div class="takeaway" id="resTake"></div>
+  <div class="actions">
+    <button class="again" id="againBtn">ทำซ้ำ</button>
+    <button class="next" id="nextBtn">โจทย์ถัดไป →</button>
+  </div>
+</div>
+
+<script>
+"use strict";
+/* =====================================================
+   Sudoku Dojo — ข้อมูลโจทย์ (Scenario Library)
+   พิกัดเป็น 1-index: [แถว, คอลัมน์]
+   g = เลขที่ให้มา, cands = ตัวเลือก (pencil marks) ที่แสดง
+   ===================================================== */
+const TIERS = {1:{nm:"พื้นฐาน",cls:"tier1",col:"var(--green)"},2:{nm:"ระดับกลาง",cls:"tier2",col:"var(--amber)"},3:{nm:"ระดับสูง",cls:"tier3",col:"var(--red)"}};
+
+const SCN = [
+{ id:"ns1", tech:"Naked Single", tier:1, est:"30 วิ",
+  q:"ช่องสีเขียวต้องเป็นเลขอะไร?", note:"แตะช่องสีเขียว แล้วเลือกตัวเลข",
+  g:[[5,1,1],[5,2,2],[5,8,3],[5,9,4],[1,5,5],[2,5,6],[9,5,7],[4,4,8]],
+  cands:{}, green:[5,5],
+  task:{type:"place",cell:[5,5],value:9},
+  hl:{houses:{rows:[5],cols:[5],boxes:[5]},cells:[[4,4]],cands:[]},
+  hints:["ช่องเขียว \u201cมองเห็น\u201d เลขอะไรบ้าง — ไล่ให้ครบทั้งแถว คอลัมน์ และกล่อง",
+         "แถว 5 มี 1,2,3,4 · คอลัมน์ 5 มี 5,6,7 — นับดูว่าตัดไปกี่ตัวแล้ว",
+         "อย่าลืมกล่องกลาง — มีเลข 8 แอบอยู่ที่ r4c4",
+         "ตอนนี้ตัดครบ 1–8 แล้ว… เหลือผู้รอดคนเดียว",
+         "1,2,3,4 (แถว) + 5,6,7 (คอลัมน์) + 8 (กล่อง) = เหลือ 9 ตัวเดียว"],
+  explain:["ช่องเป้าหมายเห็น 1,2,3,4 ในแถวเดียวกัน","เห็น 5,6,7 ในคอลัมน์เดียวกัน","เห็น 8 ในกล่องเดียวกัน","ตัวเลือกเหลือตัวเดียวคือ 9 → Naked Single"],
+  take:"ก่อนหาเทคนิคยาก ๆ เช็คก่อนเสมอว่ามีช่องไหนเหลือตัวเลือกเดียว — เร็วสุดและพลาดกันบ่อยสุด",
+  wrong:"ยังไม่ใช่ — ช่องนี้ถูกบังคับด้วยสามบ้านรอบตัวมัน ไล่เลขที่มันมองเห็นให้ครบก่อน" },
+
+{ id:"hs1", tech:"Hidden Single", tier:1, est:"45 วิ",
+  q:"เลข 6 ต้องลงช่องไหนในกล่องล่างซ้าย?", note:"แตะช่องที่ใช่ แล้วเลือกเลข 6 — สไตล์เดียวกับโจทย์ \u201cเติมตัวเลข 6\u201d",
+  g:[[1,2,6],[4,1,6],[8,6,6],[9,9,6]],
+  cands:{},
+  task:{type:"place",cell:[7,3],value:6},
+  hl:{houses:{boxes:[7]},cells:[[1,2],[4,1],[8,6],[9,9]],cands:[]},
+  hints:["เลข 6 ที่มีอยู่แล้วบนกระดาน แต่ละตัว \u201cยิงลำแสง\u201d บล็อกแถวและคอลัมน์ของมัน",
+         "โฟกัสกล่องล่างซ้าย (แถว 7–9, คอลัมน์ 1–3) — ช่องไหนโดนบล็อกบ้าง",
+         "6 ที่ r4c1 บล็อกคอลัมน์ 1 · 6 ที่ r1c2 บล็อกคอลัมน์ 2 · แถว 8 กับ 9 ก็มี 6 แล้ว",
+         "ในกล่องนี้เหลือช่องที่ลง 6 ได้แค่ช่องเดียว",
+         "ทุกทางโดนปิดหมดยกเว้น r7c3 → 6 ต้องอยู่ที่นั่น"],
+  explain:["6 ที่ r4c1 ปิดคอลัมน์ 1 ทั้งเส้น","6 ที่ r1c2 ปิดคอลัมน์ 2","6 ที่ r8c6 ปิดแถว 8 · 6 ที่ r9c9 ปิดแถว 9","ในกล่องล่างซ้าย เหลือ r7c3 ช่องเดียว → Hidden Single"],
+  take:"Hidden Single มองจากมุม \u201cเลข\u201d ไม่ใช่มุม \u201cช่อง\u201d — ถามว่าเลขนี้ไปไหนได้บ้างในบ้านหนึ่ง",
+  wrong:"ช่องนั้นยังลง 6 ได้ก็จริงในสายตาแรก แต่ลองเช็คแถว/คอลัมน์ของมันดูอีกที" },
+
+{ id:"np1", tech:"Naked Pair", tier:1, est:"1 นาที",
+  q:"คู่แฝดในแถว 4 ทำให้ตัดตัวเลือกอะไรได้บ้าง? (2 จุด)", note:"แตะช่องที่มีตัวเลือก แล้วเลือกตัวที่คิดว่าตัดออกได้",
+  g:[[4,2,1],[4,4,3],[4,6,5],[4,8,6]],
+  cands:{"4,1":[4,7],"4,3":[4,7],"4,5":[2,4,9],"4,7":[7,8,9],"4,9":[2,8,9]},
+  task:{type:"elim",targets:[[4,5,4],[4,7,7]]},
+  hl:{houses:{rows:[4]},cells:[[4,1],[4,3]],cands:[[4,1,4],[4,1,7],[4,3,4],[4,3,7]]},
+  hints:["หา \u201cคู่แฝด\u201d — สองช่องที่มีชุดตัวเลือกเหมือนกันเป๊ะ",
+         "ไล่ดูแถว 4 ทั้งแถว",
+         "r4c1 กับ r4c3 มีอะไรเหมือนกัน?",
+         "{4,7} ต้องลงสองช่องนี้แน่นอน (ใครเป็นตัวไหนยังไม่รู้ แต่จองที่แล้ว) → ช่องอื่นในแถวห้ามมี 4 หรือ 7",
+         "ตัด 4 ออกจาก r4c5 และตัด 7 ออกจาก r4c7"],
+  explain:["r4c1 และ r4c3 มีตัวเลือกแค่ {4,7} ทั้งคู่","สองเลขนี้ต้องแบ่งกันลงสองช่องนี้ ไม่มีทางอื่น","ช่องอื่นในแถว 4 จึงห้ามเป็น 4 หรือ 7","ตัด 4 จาก r4c5 · ตัด 7 จาก r4c7"],
+  take:"คู่แฝด = การจองที่ สองเลขจองสองช่อง → เลขนั้นหายไปจากช่องอื่นในบ้านเดียวกันทันที",
+  wrong:"ตัวนั้นยังมีสิทธิ์อยู่ — เหตุผลการตัดต้องมาจากคู่ {4,7} ที่ล็อกสองช่องไว้เท่านั้น" },
+
+{ id:"pt1", tech:"Locked Candidates (Pointing)", tier:1, est:"1 นาที",
+  q:"เลข 7 ในกล่องบนซ้ายบอกอะไรเรา? ตัดตัวเลือกให้ถูก (2 จุด)", note:"แบบเดียวกับโจทย์กรอบแดงในคลิป — เลขในกล่องชี้ทางออกไปข้างนอก",
+  g:[[1,1,1],[1,2,2],[1,3,5],[2,1,3],[2,2,4],[2,3,6],[3,3,8]],
+  cands:{"3,1":[7,9],"3,2":[7,9],"3,5":[3,7],"3,8":[2,7]},
+  task:{type:"elim",targets:[[3,5,7],[3,8,7]]},
+  hl:{houses:{boxes:[1],rows:[3]},cells:[[3,1],[3,2]],cands:[[3,1,7],[3,2,7]]},
+  hints:["ในกล่องบนซ้าย เลข 7 ลงได้ที่ไหนบ้าง?",
+         "ทุกที่ที่ 7 ลงได้ในกล่องนี้ อยู่บนแถวเดียวกันหมด",
+         "7 ของกล่องนี้อยู่ที่ r3c1 หรือ r3c2 แน่นอน — ทั้งคู่คือแถว 3",
+         "แปลว่า 7 ของแถว 3 ถูก \u201cใช้สิทธิ์\u201d ในกล่องนี้ไปแล้ว",
+         "ตัด 7 ออกจาก r3c5 และ r3c8"],
+  explain:["ในกล่องบนซ้าย 7 เหลือได้แค่ r3c1 / r3c2","สองช่องนี้อยู่แถว 3 ทั้งคู่ → 7 ของแถว 3 ต้องอยู่ในกล่องนี้","ช่องอื่นของแถว 3 นอกกล่อง จึงห้ามเป็น 7","ตัด 7 จาก r3c5 และ r3c8"],
+  take:"Pointing = เลขในกล่องเรียงอยู่เส้นเดียว → ผลกระทบพุ่งออกนอกกล่องตามเส้นนั้น",
+  wrong:"จุดนั้นไม่โดนผลของแพทเทิร์นนี้ — ผลตกเฉพาะ \u201cแถว 3 นอกกล่องบนซ้าย\u201d เท่านั้น" },
+
+{ id:"hp1", tech:"Hidden Pair", tier:2, est:"1.5 นาที",
+  q:"คู่ซ่อนในแถว 6 ทำให้ตัดอะไรได้บ้าง? (3 จุด)", note:"โจทย์เดียวกับสไตล์ hidden pair 8 9 ในคลิปที่เซฟไว้",
+  g:[[6,1,3],[6,3,4],[6,7,2],[6,9,7]],
+  cands:{"6,2":[1,5,6],"6,4":[1,8,9],"6,5":[1,5,6],"6,6":[5,6,8,9],"6,8":[1,6]},
+  task:{type:"elim",targets:[[6,4,1],[6,6,5],[6,6,6]]},
+  hl:{houses:{rows:[6]},cells:[[6,4],[6,6]],cands:[[6,4,8],[6,4,9],[6,6,8],[6,6,9]]},
+  hints:["เปลี่ยนมุมมอง: ไล่ทีละ \u201cเลข\u201d ว่าแต่ละตัวโผล่เป็นตัวเลือกกี่ช่อง",
+         "ในแถว 6 มีเลขสองตัวที่โผล่แค่สองช่อง — หาให้เจอ",
+         "8 กับ 9 อยู่ได้แค่ r6c4 และ r6c6 เท่านั้น",
+         "สองช่องนี้ต้องเป็น 8 กับ 9 แบ่งกัน → ตัวเลือกอื่นในสองช่องนี้เป็นแค่ตัวหลอก",
+         "ตัด 1 ออกจาก r6c4 · ตัด 5 และ 6 ออกจาก r6c6"],
+  explain:["ไล่รายเลข: 8 โผล่แค่ r6c4, r6c6 · 9 ก็เหมือนกัน","สองช่องต้องรับ 8 กับ 9 ไว้ ไม่มีที่อื่นให้ลง","ตัวเลือกอื่นในสองช่องนี้จึงเป็นไปไม่ได้","ตัด 1 จาก r6c4 · ตัด 5,6 จาก r6c6"],
+  take:"Naked ดูจากช่อง → เห็นทันที · Hidden ดูจากเลข → ต้องไล่นับ นี่คือเหตุผลที่คนพลาดบ่อยกว่า",
+  wrong:"ตัวนั้นตัดไม่ได้ด้วยเหตุผลนี้ — คู่ซ่อนอนุญาตให้ตัดเฉพาะ \u201cตัวหลอกในช่องของคู่\u201d เอง" },
+
+{ id:"cl1", tech:"Locked Candidates (Claiming)", tier:2, est:"1.5 นาที",
+  q:"เลข 5 ของแถว 2 ล็อกอยู่ตรงไหน? แล้วตัดอะไรได้? (2 จุด)", note:"",
+  g:[[2,1,1],[2,3,2],[2,7,8],[1,4,8],[1,6,1],[3,4,3]],
+  cands:{"2,2":[3,7],"2,4":[4,5],"2,5":[5,6],"2,6":[4,9],"2,8":[3,9],"2,9":[6,7],"1,5":[2,5],"3,5":[2,6,7],"3,6":[5,9]},
+  task:{type:"elim",targets:[[1,5,5],[3,6,5]]},
+  hl:{houses:{rows:[2],boxes:[2]},cells:[[2,4],[2,5]],cands:[[2,4,5],[2,5,5]]},
+  hints:["ไล่ดูว่าในแถว 2 เลข 5 เป็นตัวเลือกได้กี่ช่อง",
+         "5 ของแถว 2 อยู่แค่ r2c4 กับ r2c5",
+         "สองช่องนั้นอยู่กล่องกลางบนทั้งคู่",
+         "5 ของแถวนี้ต้องลงในกล่องนี้ → กล่องนี้ \u201cเสียโควตา 5\u201d ให้แถว 2 ไปแล้ว",
+         "ตัด 5 ออกจาก r1c5 และ r3c6 (ช่องอื่นของกล่องเดียวกัน)"],
+  explain:["ในแถว 2 เลข 5 เหลือแค่ r2c4 / r2c5","ทั้งสองอยู่ในกล่องกลางบน → 5 ของกล่องนี้ต้องอยู่บนแถว 2","ช่องอื่นในกล่องห้ามเป็น 5","ตัด 5 จาก r1c5 และ r3c6"],
+  take:"Claiming กลับด้านกับ Pointing: เส้นบีบเลขเข้ากล่อง → ผลตกที่ช่องอื่น \u201cในกล่อง\u201d",
+  wrong:"ยังไม่ใช่จุดที่โดนผล — ผลของ Claiming ตกเฉพาะช่องอื่นในกล่องกลางบนที่ไม่อยู่แถว 2" },
+
+{ id:"nt1", tech:"Naked Triple", tier:2, est:"2 นาที",
+  q:"สามช่องในคอลัมน์ 8 ล็อกเลขชุดไหน? ตัดให้ครบ (3 จุด)", note:"",
+  g:[[2,8,1],[5,8,3],[7,8,4]],
+  cands:{"1,8":[2,5],"3,8":[2,7,9],"4,8":[5,8],"6,8":[2,8],"8,8":[6,7,9],"9,8":[5,6,8]},
+  task:{type:"elim",targets:[[3,8,2],[9,8,5],[9,8,8]]},
+  hl:{houses:{cols:[8]},cells:[[1,8],[4,8],[6,8]],cands:[[1,8,2],[1,8,5],[4,8,5],[4,8,8],[6,8,2],[6,8,8]]},
+  hints:["Triple ไม่จำเป็นต้องมีครบสามตัวทุกช่อง — ขอแค่รวมกันแล้วไม่เกินสามเลข",
+         "มองหาสามช่องที่ตัวเลือกทั้งหมดวนอยู่ในชุดเดียวกัน",
+         "r1c8{2,5} · r4c8{5,8} · r6c8{2,8} — รวมกันคือ {2,5,8}",
+         "สามเลขจองสามช่อง → 2,5,8 หายจากช่องอื่นทั้งคอลัมน์",
+         "ตัด 2 จาก r3c8 · ตัด 5 และ 8 จาก r9c8"],
+  explain:["สามช่องรวมตัวเลือกได้ {2,5,8} พอดีสามเลข","สามเลขต้องแบ่งกันลงสามช่องนี้","ช่องอื่นในคอลัมน์ 8 ห้ามมี 2,5,8","ตัด 2 จาก r3c8 · ตัด 5,8 จาก r9c8"],
+  take:"สังเกตว่าไม่มีช่องไหนมีครบ {2,5,8} เลย — Triple ซ่อนแบบนี้แหละที่ตาจริงมองข้าม",
+  wrong:"ตัวนั้นไม่อยู่ในอิทธิพลของ Triple {2,5,8} — เช็คว่าตัวที่จะตัดเป็นสมาชิกชุดนี้ไหม" },
+
+{ id:"idx1", tech:"อ่านแพทเทิร์น #1", realTech:"X-Wing", tier:2, est:"1 นาที",
+  q:"แพทเทิร์นนี้คือเทคนิคอะไร?", note:"ในแถว 3 และแถว 6 เลข 7 เหลือเป็นตัวเลือกแค่ช่องที่แสดง",
+  g:[[3,5,4],[6,5,2]],
+  cands:{"3,2":[7,9],"3,7":[3,7],"6,2":[1,7],"6,7":[7,8],"8,2":[5,7],"1,7":[6,7]},
+  task:{type:"identify",correct:"X-Wing",options:["X-Wing","Naked Pair","Skyscraper","Hidden Pair"]},
+  hl:{houses:{rows:[3,6]},cells:[[3,2],[3,7],[6,2],[6,7]],cands:[[3,2,7],[3,7,7],[6,2,7],[6,7,7]]},
+  hints:["โฟกัสเลข 7 ตัวเดียว อย่าไปสนตัวเลือกอื่น",
+         "ดูแถว 3 กับแถว 6 — เลข 7 เรียงตัวยังไง",
+         "สี่มุม สองแถว สองคอลัมน์ตรงกันเป๊ะ — เลขเดียวล้วน",
+         "ถ้าเป็นเรื่อง \u201cชุดตัวเลือกทั้งช่อง\u201d จะเป็นตระกูล Pair แต่นี่คือเลขเดียวพาดสองแถว",
+         "แถวเป็นฐาน คอลัมน์รับผล — นี่คือ X-Wing ตำราเป๊ะ"],
+  explain:["เลข 7 ในแถว 3 และ 6 ลงได้แค่คอลัมน์ 2 กับ 7","ไม่ว่าจะจับคู่มุมชุดไหน คอลัมน์ 2 และ 7 ต้องมี 7 อย่างละหนึ่งแน่นอน","ช่องอื่นในสองคอลัมน์นี้ (เช่น r8c2, r1c7) จึงตัด 7 ได้","รูปสี่เหลี่ยมเลขเดียว = X-Wing"],
+  take:"สแกน X-Wing ให้ไล่ \u201cทีละเลข\u201d แล้วหาแถวที่เลขนั้นเหลือ 2 ช่อง — เจอสองแถวคอลัมน์ตรงกันคือจบ",
+  wrong:"",
+  wrongMap:{"Naked Pair":"Naked Pair ดูที่ชุดตัวเลือกทั้งช่อง (สองช่องในบ้านเดียว) — แต่นี่คือเลข 7 ตัวเดียวพาดสองแถวคนละบ้าน","Skyscraper":"Skyscraper มุมจะ \u201cเยื้อง\u201d กันข้างหนึ่ง — แต่นี่มุมตรงกันทั้งสี่เป็นสี่เหลี่ยมสมบูรณ์","Hidden Pair":"Hidden Pair คือเลขสองตัวซ่อนในสองช่องของบ้านเดียวกัน — นี่คือเลขเดียวในสองแถว"} },
+
+{ id:"xw1", tech:"X-Wing", tier:3, est:"2 นาที",
+  q:"X-Wing เลข 4 — ตัดตัวเลือกไหนได้บ้าง? (2 จุด)", note:"ในแถว 2 และแถว 7 เลข 4 เหลือเป็นตัวเลือกแค่ช่องที่แสดง",
+  g:[[2,5,1],[7,6,9]],
+  cands:{"2,3":[4,5],"2,8":[4,9],"7,3":[3,4],"7,8":[4,8],"5,3":[4,6,9],"4,8":[1,4,7]},
+  task:{type:"elim",targets:[[5,3,4],[4,8,4]]},
+  hl:{houses:{rows:[2,7]},cells:[[2,3],[2,8],[7,3],[7,8]],cands:[[2,3,4],[2,8,4],[7,3,4],[7,8,4]]},
+  hints:["เลข 4 ในสองแถวนี้เรียงเป็นรูปสี่เหลี่ยม — เห็นมุมทั้งสี่ไหม",
+         "มุมอยู่ที่คอลัมน์ 3 กับ 8 ทั้งสองแถว",
+         "แถว 2 ต้องลง 4 ที่ c3 หรือ c8 · แถว 7 ก็เช่นกัน — และห้ามซ้ำคอลัมน์",
+         "ไม่ว่าจะจับคู่แบบไหน คอลัมน์ 3 และ 8 โดนใช้สิทธิ์ 4 แน่นอน",
+         "ตัด 4 ออกจาก r5c3 และ r4c8"],
+  explain:["แถว 2 และ 7: เลข 4 ลงได้เฉพาะ c3, c8","ทางเป็นไปได้มีสองแบบ: (r2c3,r7c8) หรือ (r2c8,r7c3)","ทั้งสองแบบ คอลัมน์ 3 และ 8 มี 4 ครบโควตาแล้ว","ช่องอื่นในสองคอลัมน์นี้จึงตัด 4 ได้: r5c3, r4c8"],
+  take:"ฐานเป็นแถว → ผลตกที่คอลัมน์ (และกลับกัน) จำทิศของผลให้แม่นแล้วจะไม่ตัดผิดฝั่ง",
+  wrong:"จุดนั้นไม่อยู่ในคอลัมน์ของ X-Wing — ผลของแพทเทิร์นนี้ตกเฉพาะคอลัมน์ 3 กับ 8 นอกแถวฐาน" },
+
+{ id:"xy1", tech:"XY-Wing", tier:3, est:"2.5 นาที",
+  q:"XY-Wing — ตัดตัวเลือกไหนได้? (1 จุด)", note:"จุดหมุน (pivot) คือช่องที่มองเห็นปีกทั้งสองข้าง",
+  g:[[5,1,9],[1,5,8]],
+  cands:{"5,5":[1,2],"5,8":[1,3],"2,5":[2,3],"2,8":[3,7]},
+  task:{type:"elim",targets:[[2,8,3]]},
+  hl:{houses:{rows:[2,5],cols:[5,8]},cells:[[5,5],[5,8],[2,5]],cands:[[5,5,1],[5,5,2],[5,8,3],[2,5,3]]},
+  hints:["หาช่องสองตัวเลือกสามช่องที่โยงกันแบบ {1,2} · {1,3} · {2,3}",
+         "จุดหมุนคือช่องที่เห็นอีกสองช่องที่เหลือ",
+         "pivot = r5c5 {1,2} · ปีก = r5c8 {1,3} และ r2c5 {2,3}",
+         "แตกสองกรณี: pivot=1 → ปีกขวาเป็น 3 · pivot=2 → ปีกบนเป็น 3",
+         "ทั้งสองกรณีมีเลข 3 จ่อช่อง r2c8 → ตัด 3 ที่นั่น"],
+  explain:["pivot r5c5 เป็นได้แค่ 1 หรือ 2","ถ้า 1 → r5c8 เหลือ 3 · ถ้า 2 → r2c5 เหลือ 3","ไม่ว่ากรณีไหน มีปีกตัวหนึ่งเป็น 3 เสมอ","ช่องที่เห็นปีกทั้งคู่ (r2c8) จึงเป็น 3 ไม่ได้"],
+  take:"XY-Wing คือ if-else สองทางที่จบเหมือนกัน — ฝึกถามว่า \u201cช่องไหนซวยทั้งสองกรณี\u201d",
+  wrong:"เป้าของ XY-Wing คือช่องที่มองเห็น \u201cปีกทั้งสอง\u201d พร้อมกันเท่านั้น — จุดนั้นเห็นไม่ครบ" },
+
+{ id:"sky1", tech:"Skyscraper", tier:3, est:"3 นาที",
+  q:"Skyscraper เลข 5 — ตัดที่ไหนได้? (2 จุด)", note:"ในคอลัมน์ 1 และคอลัมน์ 4 เลข 5 เหลือเป็นตัวเลือกแค่ช่องที่แสดง",
+  g:[[9,7,5]],
+  cands:{"2,1":[5,7],"9,1":[5,8],"3,4":[5,6],"9,4":[2,5],"3,2":[3,5],"2,6":[5,8]},
+  task:{type:"elim",targets:[[3,2,5],[2,6,5]]},
+  hl:{houses:{cols:[1,4]},cells:[[2,1],[9,1],[3,4],[9,4]],cands:[[2,1,5],[9,1,5],[3,4,5],[9,4,5]]},
+  hints:["สองคอลัมน์ มีเลข 5 อย่างละสองช่อง — และฐานอยู่แถวเดียวกัน (แถว 9)",
+         "ฐานสองตัวอยู่แถว 9 → เป็น 5 พร้อมกันไม่ได้",
+         "หลังคาคือ r2c1 กับ r3c4 — อย่างน้อยหนึ่งในนี้ต้องเป็น 5",
+         "ลองไล่: ถ้า r9c1=5 → r9c4≠5 → r3c4=5 · ถ้า r9c1≠5 → r2c1=5",
+         "ช่องที่เห็นหลังคาทั้งคู่ห้ามเป็น 5: r3c2 และ r2c6"],
+  explain:["คอลัมน์ 1: 5 อยู่ r2 หรือ r9 · คอลัมน์ 4: 5 อยู่ r3 หรือ r9","ฐาน r9c1, r9c4 อยู่แถวเดียวกัน → เป็น 5 ทั้งคู่ไม่ได้","จึงมีหลังคา (r2c1 หรือ r3c4) เป็น 5 อย่างน้อยหนึ่งตัวเสมอ","r3c2 เห็นทั้งคู่ (กล่องเดียวกับ r2c1 + แถวเดียวกับ r3c4) · r2c6 ก็เห็นทั้งคู่ → ตัด 5"],
+  take:"Skyscraper = X-Wing ที่มุมเยื้องข้างหนึ่ง — ผลไม่ตกทั้งคอลัมน์ แต่ตกเฉพาะช่องที่เห็นหลังคาทั้งสอง",
+  wrong:"จุดนั้นเห็นหลังคาไม่ครบสองตัว — เช็คว่าช่องเป้าเห็นทั้ง r2c1 และ r3c4 จริงไหม" },
+
+{ id:"ur1", tech:"Unique Rectangle", tier:3, est:"2 นาที",
+  q:"Unique Rectangle — ช่องสีเขียว (r3c5) ต้องเป็นเลขอะไร?", note:"สี่มุมนี้กินพื้นที่แค่สองกล่อง — เงื่อนไขสำคัญของ UR",
+  g:[],
+  cands:{"2,2":[3,9],"2,5":[3,9],"3,2":[3,9],"3,5":[3,6,9]}, green:[3,5],
+  task:{type:"place",cell:[3,5],value:6},
+  hl:{houses:{rows:[2,3]},cells:[[2,2],[2,5],[3,2],[3,5]],cands:[[3,5,6]]},
+  hints:["สี่มุมเป็น {3,9} เกือบครบ — คิดดูว่าถ้าครบจริงจะเกิดอะไรขึ้น",
+         "ถ้าทั้งสี่มุมเป็น {3,9} ล้วน จะสลับค่ากันได้สองแบบ → กระดานมีสองเฉลย",
+         "ซูโดกุที่ถูกต้องมีเฉลยเดียวเท่านั้น — แพทเทิร์นมรณะแบบนี้ต้องไม่เกิด",
+         "มุมที่มีตัวเกิน (r3c5 มี 6) คือทางหนีทางเดียว",
+         "r3c5 เป็น 3 หรือ 9 ไม่ได้ → ต้องเป็น 6"],
+  explain:["สมมติ r3c5 เป็น 3 หรือ 9 → สี่มุมกลายเป็น {3,9} ล้วนในสองกล่อง","แบบนั้นสลับ 3↔9 ได้ทั้งสี่เหลี่ยม → เฉลยไม่ unique","โจทย์ที่ valid ต้องมีเฉลยเดียว จึงเป็นแบบนั้นไม่ได้","r3c5 ต้องเป็นตัวเกิน = 6"],
+  take:"UR ใช้ \u201cความ unique ของเฉลย\u201d เป็นอาวุธ — ใช้ได้กับโจทย์ที่การันตีเฉลยเดียวเท่านั้น",
+  wrong:"ถ้าลงตัวนั้น สี่มุมจะกลายเป็น {3,9} ล้วน สลับค่ากันได้สองเฉลย — ขัดกับความจริงที่ว่าโจทย์มีเฉลยเดียว" },
+
+{ id:"ww1", tech:"W-Wing", tier:3, est:"3 นาที",
+  q:"W-Wing — ตัดตัวเลือกไหนได้? (2 จุด)", note:"ในคอลัมน์ 5 เลข 8 เหลือเป็นตัวเลือกแค่สองช่องที่แสดง",
+  g:[[5,5,1]],
+  cands:{"2,3":[5,8],"8,7":[5,8],"2,5":[3,8],"8,5":[8,9],"2,7":[5,9],"8,3":[2,5]},
+  task:{type:"elim",targets:[[2,7,5],[8,3,5]]},
+  hl:{houses:{cols:[5]},cells:[[2,3],[8,7]],cands:[[2,5,8],[8,5,8],[2,3,5],[2,3,8],[8,7,5],[8,7,8]]},
+  hints:["มีช่องแฝด {5,8} สองช่องอยู่คนละมุมกระดาน — มันคุยกันไม่ได้ตรง ๆ ต้องหาสะพาน",
+         "สะพานคือ strong link ของเลข 8 ในคอลัมน์ 5 (เหลือแค่ r2c5 / r8c5)",
+         "ถ้า r2c5=8 → r2c3 ห้ามเป็น 8 → เป็น 5 · ถ้า r8c5=8 → r8c7 เป็น 5",
+         "สรุป: ช่องแฝดตัวใดตัวหนึ่งเป็น 5 เสมอ",
+         "ช่องที่เห็นแฝดทั้งคู่ห้ามเป็น 5: r2c7 และ r8c3"],
+  explain:["แฝด A=r2c3{5,8} · B=r8c7{5,8} · สะพาน: 8 ในคอลัมน์ 5 อยู่ r2c5 หรือ r8c5","r2c5=8 → A ตัด 8 → A=5 · r8c5=8 → B=5","ดังนั้น A หรือ B เป็น 5 แน่นอนหนึ่งตัว","r2c7 กับ r8c3 เห็นทั้ง A และ B → ตัด 5"],
+  take:"W-Wing = แฝดค่าเดียวกันสองช่อง + สะพาน strong link ของเลขตัวหนึ่งในแฝด — เจอแฝดไกล ๆ ให้ลองหาสะพานเสมอ",
+  wrong:"เป้าต้องเป็นช่องที่เห็นแฝดทั้งสองช่องพร้อมกัน — จุดนั้นเห็นไม่ครบ" },
+
+{ id:"idx2", tech:"อ่านแพทเทิร์น #2", realTech:"XY-Wing", tier:3, est:"1.5 นาที",
+  q:"สามช่องนี้ประกอบกันเป็นเทคนิคอะไร?", note:"r4c4{2,6} · r4c9{6,8} · r7c4{2,8} และเหยื่อ r7c9",
+  g:[[4,1,5]],
+  cands:{"4,4":[2,6],"4,9":[6,8],"7,4":[2,8],"7,9":[3,8]},
+  task:{type:"identify",correct:"XY-Wing",options:["XY-Wing","W-Wing","Naked Triple","Simple Coloring"]},
+  hl:{houses:{rows:[4,7],cols:[4,9]},cells:[[4,4],[4,9],[7,4]],cands:[[4,4,2],[4,4,6],[4,9,8],[7,4,8]]},
+  hints:["สามช่อง สองตัวเลือกทั้งหมด — ดูว่าค่ามัน \u201cเหมือนกัน\u201d หรือ \u201cโยงกัน\u201d",
+         "{2,6} {6,8} {2,8} — สามชุดต่างกันหมด แต่แชร์เลขกันเป็นทอด ๆ",
+         "r4c4 เห็นทั้ง r4c9 (แถวเดียวกัน) และ r7c4 (คอลัมน์เดียวกัน) — มันคือจุดหมุน",
+         "ถ้าแฝดค่าเดียวกันสองช่อง + สะพาน จะเป็น W-Wing แต่นี่สามค่าโยงกัน",
+         "pivot + ปีกสองข้างที่จบด้วยเลขเดียวกัน (8) = XY-Wing"],
+  explain:["pivot r4c4{2,6} เห็นปีก r4c9{6,8} และ r7c4{2,8}","pivot=2 → r7c4=8 · pivot=6 → r4c9=8","ปีกตัวหนึ่งเป็น 8 เสมอ → r7c9 (เห็นทั้งสองปีก) ตัด 8 ได้","โครง pivot-ปีก-ปีก สามค่า = XY-Wing"],
+  take:"แยกให้ขาด: XY-Wing = สามค่าโยงกัน · W-Wing = ค่าเดียวกันสองช่อง+สะพาน · Naked Triple = ต้องอยู่บ้านเดียวกัน",
+  wrong:"",
+  wrongMap:{"W-Wing":"W-Wing ต้องมีช่องแฝด \u201cค่าเดียวกันเป๊ะ\u201d สองช่อง + สะพาน strong link — แต่นี่สามช่องค่าต่างกันหมด","Naked Triple":"Naked Triple ต้องอยู่บ้านเดียวกันทั้งสามช่อง — สามช่องนี้กระจายคนละบ้าน","Simple Coloring":"Simple Coloring ไล่สีเลขตัวเดียวผ่าน strong links — แต่นี่ใช้เลขสามตัวโยงกัน"} }
+];
+
+/* =====================================================
+   Engine — state, navigation, board, hints, coach, stats
+   หมายเหตุ: สถิติเก็บในหน่วยความจำระหว่างเซสชัน
+   (จุดต่อ persistence อยู่ที่ saveStats()/loadStats())
+   ===================================================== */
+const $ = s => document.querySelector(s);
+const boxOf = (r,c) => Math.floor((r-1)/3)*3 + Math.floor((c-1)/3) + 1;
+const key = (r,c) => r + "," + c;
+const sees = (a,b) => a[0]===b[0] || a[1]===b[1] || boxOf(a[0],a[1])===boxOf(b[0],b[1]);
+const haptic = p => { try{ navigator.vibrate && navigator.vibrate(p); }catch(e){} };
+const shuffle = a => { a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} return a; };
+
+const PRAISE = ["เยี่ยม! ตาเห็นแพทเทิร์นแล้ว 👀","คมมาก","ถูกเป๊ะ ไปต่อ","นิ่งและแม่น 👌","สายตาระดับนี้แล้วนะ"];
+
+/* ---- session state ---- */
+const S = { scr:"home", from:"home", order:[], idx:0, scn:null,
+            hints:0, mistakes:0, done:new Set(), sel:null, awaitCell:null };
+
+/* ---- stats (in-memory) ---- */
+const ST = { perTech:{}, best:{}, solved:new Set(), actions:0, wrong:0, streak:0, bestStreak:0, achv:new Set(), noHintCount:0 };
+function saveStats(){ /* ต่อ storage ภายนอกได้ที่นี่ */ }
+function loadStats(){ }
+function techStat(t){ return ST.perTech[t] || (ST.perTech[t]={ok:0,ng:0}); }
+
+const ACHV = [
+ {id:"first", em:"🌱", nm:"ก้าวแรก", ds:"ผ่านโจทย์ข้อแรก"},
+ {id:"nohint", em:"🧠", nm:"ไม่ง้อคำใบ้", ds:"ผ่านโดยไม่ใช้คำใบ้เลย"},
+ {id:"perfect", em:"✨", nm:"เพอร์เฟกต์", ds:"ผ่านแบบไม่พลาดและไม่ใช้คำใบ้"},
+ {id:"streak3", em:"🔥", nm:"สามติด", ds:"ผ่านติดกัน 3 ข้อ"},
+ {id:"tier3", em:"🦅", nm:"สายตาระดับสูง", ds:"ผ่านโจทย์ระดับสูงข้อแรก"},
+ {id:"all", em:"🏆", nm:"ครบทุกสำนัก", ds:"ผ่านครบทุกโจทย์ในคลัง"}
+];
+
+/* ---- navigation ---- */
+function go(scr){
+  document.querySelectorAll(".screen").forEach(el=>el.classList.remove("on"));
+  $("#scr-"+scr).classList.add("on");
+  S.scr = scr;
+  if(scr==="home") renderHome();
+  if(scr==="library") renderLibrary();
+  if(scr==="stats") renderStats();
+  window.scrollTo(0,0);
+}
+document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>{
+  haptic(8);
+  const g = b.dataset.go;
+  if(g==="ladder") startLadder();
+  else if(g==="random") startRandom();
+  else if(g==="weak") startWeak();
+  else go(g);
+}));
+
+/* ---- modes ---- */
+function startLadder(){
+  S.hideTech = false;
+  const order = SCN.slice().sort((a,b)=>a.tier-b.tier);
+  let idx = order.findIndex(s=>!ST.solved.has(s.id));
+  if(idx<0) idx = 0;
+  S.order = order; S.idx = idx; S.from = "home";
+  loadScn(order[idx]);
+}
+function startRandom(){
+  S.order = shuffle(SCN); S.idx = 0; S.from = "home"; S.hideTech = true;
+  loadScn(S.order[0]);
+}
+function startWeak(){
+  S.hideTech = false;
+  const weak = SCN.filter(s=>{const t=techStat(s.tech); return t.ng>0;})
+                  .sort((a,b)=>techStat(b.tech).ng - techStat(a.tech).ng);
+  S.order = weak.length ? weak : shuffle(SCN);
+  S.idx = 0; S.from = "home";
+  loadScn(S.order[0]);
+  if(!weak.length) coach("ยังไม่มีข้อมูลจุดอ่อน — สุ่มโจทย์มาให้ก่อน พลาดข้อไหนเดี๋ยวโหมดนี้จะจำเอง","");
+}
+
+/* ---- home ---- */
+function renderHome(){
+  $("#ladderProg").textContent = ST.solved.size + "/" + SCN.length;
+  $("#streakline").innerHTML = ST.solved.size
+    ? `🔥 สตรีค <b>${ST.streak}</b> · ผ่านแล้ว <b>${ST.solved.size}/${SCN.length}</b> ข้อ`
+    : `เริ่มจากโหมดไต่ระดับได้เลย — ข้อแรกใช้เวลาไม่ถึงนาที`;
+}
+
+/* ---- library ---- */
+function renderLibrary(){
+  const wrap = $("#libList"); wrap.innerHTML = "";
+  [1,2,3].forEach(t=>{
+    const head = document.createElement("div");
+    head.className = "tierhead";
+    head.innerHTML = `<span class="dot" style="background:${TIERS[t].col}"></span> ${TIERS[t].nm}`;
+    wrap.appendChild(head);
+    const list = document.createElement("div"); list.className = "scnlist";
+    SCN.filter(s=>s.tier===t).forEach(s=>{
+      const best = ST.best[s.id]||0;
+      const b = document.createElement("button");
+      b.className = "scn";
+      b.innerHTML = `<span class="badge ${TIERS[t].cls} chip" style="border-radius:12px">${s.tech.split(" ").map(w=>w[0]).join("").slice(0,2)}</span>
+        <span class="tx"><span class="tech">${s.tech}</span><br><span class="th">${s.est} · ${ST.solved.has(s.id)?"ผ่านแล้ว":"ยังไม่ผ่าน"}</span></span>
+        <span class="stars">${best? "★".repeat(best)+"☆".repeat(3-best) : "☆☆☆"}</span>`;
+      b.addEventListener("click",()=>{ haptic(8); S.hideTech=false; S.order=[s]; S.idx=0; S.from="library"; loadScn(s); });
+      list.appendChild(b);
+    });
+    wrap.appendChild(list);
+  });
+}
+
+/* ---- play: load & render ---- */
+function loadScn(scn){
+  S.scn = scn; S.hints = 0; S.mistakes = 0; S.done = new Set(); S.sel = null;
+  $("#playTitle").textContent = (S.order.length>1? `ข้อ ${S.idx+1}/${S.order.length}` : "โจทย์");
+  $("#playChips").innerHTML =
+    `<span class="chip ${TIERS[scn.tier].cls}">${TIERS[scn.tier].nm}</span>` +
+    (S.hideTech ? `<span class="chip">เทคนิคอะไร? 🤔</span>` : `<span class="chip">${scn.tech}</span>`) +
+    `<span class="chip" style="background:var(--paper-2);color:var(--ink-soft)">⏱ ${scn.est}</span>`;
+  $("#playQ").textContent = scn.q;
+  $("#playNote").textContent = scn.note || "";
+  $("#playNote").style.display = scn.note ? "" : "none";
+  $("#hintLbl").textContent = "คำใบ้";
+  $("#hintBtn").disabled = false;
+  hideCoach();
+  renderBoard();
+  renderOpts();
+  go("play");
+}
+
+function renderBoard(){
+  const scn = S.scn, bd = $("#board");
+  bd.innerHTML = "";
+  const gmap = {}; scn.g.forEach(([r,c,v])=>gmap[key(r,c)]=v);
+  for(let r=1;r<=9;r++) for(let c=1;c<=9;c++){
+    const cell = document.createElement("div");
+    cell.className = "cell";
+    if(c===3||c===6) cell.classList.add("bR");
+    if(r===3||r===6) cell.classList.add("bB");
+    cell.dataset.r = r; cell.dataset.c = c;
+    if(scn.green && scn.green[0]===r && scn.green[1]===c) cell.classList.add("target");
+    const gv = gmap[key(r,c)];
+    if(gv){
+      cell.classList.add("given");
+      cell.innerHTML = `<span class="big">${gv}</span>`;
+    } else if(scn.cands[key(r,c)]){
+      const set = scn.cands[key(r,c)];
+      const grid = document.createElement("div"); grid.className = "cands";
+      for(let n=1;n<=9;n++){
+        const sp = document.createElement("span");
+        sp.dataset.n = n;
+        if(set.includes(n) && !S.done.has(key(r,c)+","+n)) sp.textContent = n;
+        grid.appendChild(sp);
+      }
+      cell.appendChild(grid);
+    }
+    cell.addEventListener("click",()=>cellTap(r,c,cell));
+    bd.appendChild(cell);
+  }
+}
+
+function renderOpts(){
+  const w = $("#optWrap");
+  if(S.scn.task.type!=="identify"){ w.style.display="none"; w.innerHTML=""; return; }
+  w.style.display = "";
+  w.innerHTML = "";
+  shuffle(S.scn.task.options).forEach(op=>{
+    const b = document.createElement("button");
+    b.className = "opt"; b.textContent = op;
+    b.addEventListener("click",()=>{ haptic(8); answerIdentify(op,b); });
+    w.appendChild(b);
+  });
+}
+
+/* ---- interactions ---- */
+function cellTap(r,c,cell){
+  const scn = S.scn, t = scn.task;
+  haptic(6);
+  if(t.type==="place"){
+    const gmap = {}; scn.g.forEach(([rr,cc,v])=>gmap[key(rr,cc)]=v);
+    if(gmap[key(r,c)]){ coach("ช่องนี้มีเลขอยู่แล้ว ลองช่องว่างดู",""); return; }
+    document.querySelectorAll(".cell.sel").forEach(el=>el.classList.remove("sel"));
+    cell.classList.add("sel");
+    S.awaitCell = [r,c];
+    openNumSheet(r,c);
+  } else if(t.type==="elim"){
+    const set = scn.cands[key(r,c)];
+    if(!set){ return; }
+    const remain = set.filter(n=>!S.done.has(key(r,c)+","+n));
+    if(!remain.length) return;
+    S.awaitCell = [r,c];
+    openCandSheet(r,c,remain);
+  }
+}
+
+/* sheets */
+function openSheet(id){ $("#sheetMask").classList.add("on"); $(id).classList.add("on"); }
+function closeSheets(){
+  $("#sheetMask").classList.remove("on");
+  document.querySelectorAll(".sheet").forEach(s=>s.classList.remove("on"));
+  document.querySelectorAll(".cell.sel").forEach(el=>el.classList.remove("sel"));
+}
+$("#sheetMask").addEventListener("click",closeSheets);
+
+function openNumSheet(r,c){
+  $("#numTitle").textContent = `ลงเลขอะไรที่ r${r}c${c}?`;
+  const g = $("#numGrid"); g.innerHTML = "";
+  for(let n=1;n<=9;n++){
+    const b = document.createElement("button");
+    b.textContent = n;
+    b.addEventListener("click",()=>{ haptic(8); closeSheets(); answerPlace(r,c,n); });
+    g.appendChild(b);
+  }
+  openSheet("#numSheet");
+}
+function openCandSheet(r,c,remain){
+  const g = $("#candGrid"); g.innerHTML = "";
+  remain.forEach(n=>{
+    const b = document.createElement("button");
+    b.textContent = n;
+    b.addEventListener("click",()=>{ haptic(8); closeSheets(); answerElim(r,c,n); });
+    g.appendChild(b);
+  });
+  openSheet("#candSheet");
+}
+
+/* ---- answers ---- */
+function recordAction(ok){
+  ST.actions++;
+  const t = techStat(S.scn.tech);
+  if(ok) t.ok++; else { t.ng++; ST.wrong++; }
+  saveStats();
+}
+
+function answerPlace(r,c,n){
+  const t = S.scn.task;
+  if(r===t.cell[0] && c===t.cell[1] && n===t.value){
+    recordAction(true);
+    const cell = cellEl(r,c);
+    cell.classList.add("okflash");
+    cell.innerHTML = `<span class="big" style="color:var(--pen)">${n}</span>`;
+    success();
+  } else {
+    recordAction(false);
+    mistake(cellEl(r,c), placeWrongMsg(r,c,n));
+  }
+}
+function placeWrongMsg(r,c,n){
+  // อธิบายว่าโดนบล็อกเพราะอะไร ถ้าชนกับเลขที่ให้มา
+  for(const [gr,gc,gv] of S.scn.g){
+    if(gv!==n) continue;
+    if(gr===r) return `ลง ${n} ตรงนั้นไม่ได้ — แถว ${r} มี ${n} อยู่แล้วที่ r${gr}c${gc}`;
+    if(gc===c) return `ลง ${n} ตรงนั้นไม่ได้ — คอลัมน์ ${c} มี ${n} อยู่แล้วที่ r${gr}c${gc}`;
+    if(boxOf(gr,gc)===boxOf(r,c)) return `ลง ${n} ตรงนั้นไม่ได้ — กล่องเดียวกันมี ${n} อยู่แล้วที่ r${gr}c${gc}`;
+  }
+  return S.scn.wrong || "ยังไม่ใช่ — ลองไล่เหตุผลใหม่อีกรอบ";
+}
+
+function answerElim(r,c,n){
+  const scn = S.scn, k = key(r,c)+","+n;
+  const isTarget = scn.task.targets.some(([tr,tc,tn])=>tr===r&&tc===c&&tn===n);
+  if(isTarget && !S.done.has(k)){
+    recordAction(true);
+    S.done.add(k);
+    const sp = candEl(r,c,n);
+    if(sp){ sp.classList.add("dying"); setTimeout(()=>{ sp.classList.remove("dying"); sp.classList.add("gone"); sp.textContent=""; },560); }
+    cellEl(r,c).classList.add("okflash");
+    setTimeout(()=>cellEl(r,c).classList.remove("okflash"),520);
+    const left = scn.task.targets.length - S.done.size;
+    if(left>0){ coach(`ตัดถูก! เหลืออีก ${left} จุด`,"ok"); haptic([10,40,10]); }
+    else success();
+  } else {
+    recordAction(false);
+    const isPattern = (scn.hl.cands||[]).some(([pr,pc,pn])=>pr===r&&pc===c&&pn===n);
+    const msg = isPattern
+      ? "ตัวนั้นคือชิ้นส่วนของแพทเทิร์นเอง — เราใช้มันเป็น \u201cเหตุผล\u201d ไม่ได้เอามันไปตัดทิ้ง"
+      : (scn.wrong || "ตัวนั้นยังตัดไม่ได้ด้วยเหตุผลของแพทเทิร์นนี้");
+    mistake(cellEl(r,c), msg);
+  }
+}
+
+function answerIdentify(op, btn){
+  const t = S.scn.task;
+  if(op===t.correct){
+    recordAction(true);
+    btn.classList.add("yes");
+    success();
+  } else {
+    recordAction(false);
+    btn.classList.add("no");
+    setTimeout(()=>btn.classList.remove("no"),900);
+    const msg = (S.scn.wrongMap && S.scn.wrongMap[op]) || S.scn.wrong || "ยังไม่ใช่ตัวนี้ — ดูโครงของแพทเทิร์นอีกที";
+    mistake(null, msg);
+  }
+}
+
+function cellEl(r,c){ return document.querySelector(`.cell[data-r="${r}"][data-c="${c}"]`); }
+function candEl(r,c,n){ const cl = cellEl(r,c); return cl ? cl.querySelector(`.cands span[data-n="${n}"]`) : null; }
+
+/* ---- mistakes & coach ---- */
+function mistake(cell, msg){
+  S.mistakes++;
+  haptic(60);
+  if(cell){ cell.classList.add("wrongflash"); setTimeout(()=>cell.classList.remove("wrongflash"),450); }
+  let extra = "";
+  if(S.mistakes>=2 && S.hints===0) extra = " — ลองกดคำใบ้ 💡 ดูไหม ไล่ให้ทีละชั้นเลย";
+  coach(msg + extra, "err");
+}
+
+function coach(msg, mood){
+  const box = $("#coachBox");
+  box.style.display = "";
+  box.className = "coach" + (mood==="err" ? " err" : mood==="ok" ? " ok" : "");
+  $("#coachTx").textContent = msg;
+}
+function hideCoach(){ $("#coachBox").style.display = "none"; }
+
+/* ---- hints (ไล่ระดับ 5 ชั้น) ---- */
+$("#hintBtn").addEventListener("click",()=>{
+  if(S.hints>=5) return;
+  haptic(8);
+  S.hints++;
+  const h = S.scn.hints[S.hints-1] || "";
+  applyHintVisual(S.hints);
+  coach("💡 " + h, "");
+  $("#hintLbl").textContent = `คำใบ้ ${S.hints}/5`;
+  if(S.hints>=5) $("#hintBtn").disabled = true;
+});
+
+function applyHintVisual(level){
+  const hl = S.scn.hl || {};
+  if(level===2 && hl.houses){
+    (hl.houses.rows||[]).forEach(r=>{ for(let c=1;c<=9;c++) cellEl(r,c).classList.add("hl-house"); });
+    (hl.houses.cols||[]).forEach(c=>{ for(let r=1;r<=9;r++) cellEl(r,c).classList.add("hl-house"); });
+    (hl.houses.boxes||[]).forEach(b=>{
+      const r0 = Math.floor((b-1)/3)*3+1, c0 = ((b-1)%3)*3+1;
+      for(let r=r0;r<r0+3;r++) for(let c=c0;c<c0+3;c++) cellEl(r,c).classList.add("hl-house");
+    });
+  }
+  if(level===3) (hl.cells||[]).forEach(([r,c])=>cellEl(r,c).classList.add("hl-cell"));
+  if(level===4) (hl.cands||[]).forEach(([r,c,n])=>{ const sp=candEl(r,c,n); if(sp&&sp.textContent) sp.classList.add("keycand"); });
+}
+
+/* ---- success & result ---- */
+function stars(){
+  if(S.hints===0 && S.mistakes===0) return 3;
+  if(S.hints<=2 && S.mistakes<=1) return 2;
+  return 1;
+}
+function success(){
+  haptic([15,50,15,50,30]);
+  const scn = S.scn, st = stars();
+  const firstSolve = !ST.solved.has(scn.id);
+  ST.solved.add(scn.id);
+  ST.best[scn.id] = Math.max(ST.best[scn.id]||0, st);
+  ST.streak++; ST.bestStreak = Math.max(ST.bestStreak, ST.streak);
+  // achievements
+  ST.achv.add("first");
+  if(S.hints===0) ST.achv.add("nohint");
+  if(S.hints===0 && S.mistakes===0) ST.achv.add("perfect");
+  if(ST.streak>=3) ST.achv.add("streak3");
+  if(scn.tier===3) ST.achv.add("tier3");
+  if(ST.solved.size===SCN.length) ST.achv.add("all");
+  saveStats();
+  coach(PRAISE[Math.floor(Math.random()*PRAISE.length)], "ok");
+  setTimeout(()=>{
+    $("#resStars").textContent = "★".repeat(st) + "☆".repeat(3-st);
+    $("#resName").textContent = (scn.realTech ? scn.realTech + " — " : "") + scn.tech;
+    const ul = $("#resSteps"); ul.innerHTML = "";
+    scn.explain.forEach((s,i)=>{
+      const li = document.createElement("li");
+      li.innerHTML = `<span class="n">${i+1}</span><span>${s}</span>`;
+      ul.appendChild(li);
+    });
+    $("#resTake").innerHTML = "🔑 " + scn.take;
+    openSheet("#resultSheet");
+  }, 750);
+}
+$("#againBtn").addEventListener("click",()=>{ haptic(8); closeSheets(); loadScn(S.scn); });
+$("#nextBtn").addEventListener("click",()=>{
+  haptic(8); closeSheets();
+  if(S.idx < S.order.length-1){ S.idx++; loadScn(S.order[S.idx]); }
+  else go(S.from);
+});
+
+/* ---- play misc ---- */
+$("#resetBtn").addEventListener("click",()=>{ haptic(8); loadScn(S.scn); });
+$("#quitBtn").addEventListener("click",()=>{ haptic(8); closeSheets(); go(S.from); });
+
+/* ---- stats screen ---- */
+function renderStats(){
+  $("#stSolved").textContent = ST.solved.size;
+  $("#stAcc").textContent = ST.actions ? Math.round((ST.actions-ST.wrong)/ST.actions*100)+"%" : "–";
+  $("#stStreak").textContent = ST.streak;
+  const bars = $("#techBars");
+  const techs = Object.keys(ST.perTech);
+  if(!techs.length){ bars.innerHTML = `<div class="emptyhint">ยังไม่มีข้อมูล — ไปฝึกสักสองสามข้อก่อน</div>`; }
+  else{
+    bars.innerHTML = "";
+    techs.sort((a,b)=>{const A=ST.perTech[a],B=ST.perTech[b];return (A.ok/(A.ok+A.ng))-(B.ok/(B.ok+B.ng));})
+      .forEach(t=>{
+        const d = ST.perTech[t], pc = Math.round(d.ok/(d.ok+d.ng)*100);
+        const row = document.createElement("div"); row.className = "barrow";
+        row.innerHTML = `<span class="lb">${t}</span><span class="bar"><i style="width:${pc}%"></i></span><span class="pc">${pc}%</span>`;
+        bars.appendChild(row);
+      });
+  }
+  const al = $("#achvList"); al.innerHTML = "";
+  ACHV.forEach(a=>{
+    const d = document.createElement("div");
+    d.className = "achv" + (ST.achv.has(a.id)?" got":"");
+    d.innerHTML = `<span class="em">${a.em}</span><span><b>${a.nm}</b><br><span class="ds">${a.ds}</span></span>`;
+    al.appendChild(d);
+  });
+}
+
+/* ---- theme ---- */
+const themeBtn = $("#themeBtn");
+function setTheme(t){
+  document.documentElement.dataset.theme = t;
+  themeBtn.textContent = t==="dark" ? "☀️" : "🌙";
+  const mc = document.querySelector('meta[name="theme-color"]');
+  if(mc) mc.content = t==="dark" ? "#101726" : "#F6F2E7";
+}
+themeBtn.addEventListener("click",()=>{ haptic(8); setTheme(document.documentElement.dataset.theme==="dark"?"light":"dark"); });
+if(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) setTheme("dark");
+
+/* ---- boot ---- */
+loadStats();
+renderHome();
+
+</script>
+</body>
+</html>
