@@ -5,144 +5,180 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ครูซูโดกุ — ฝึกเทคนิคทีละขั้น</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Mitr:wght@500;600;700&family=Prompt:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#182430;
-    --panel:#1f2e3c;
-    --panel-2:#243447;
-    --ink:#e9edf1;
-    --ink-dim:#93a5b8;
-    --line:#354a5f;
-    --line-thick:#7f97ad;
-    --amber:#e8a33d;
-    --teal:#38bdb2;
-    --purple:#a78bfa;
-    --green:#5fd08a;
-    --red:#e8666b;
+    --bg:#EAF6FF;
+    --panel:#FFFFFF;
+    --panel-2:#F1F9FF;
+    --ink:#243B55;
+    --ink-dim:#7189A6;
+    --line:#DCEEFB;
+    --line-thick:#8FC7EE;
+    --amber:#FFA928;
+    --teal:#1FC2B0;
+    --purple:#8C7CFF;
+    --green:#2FC26E;
+    --red:#FF5A6E;
+    --pink:#FF7EB6;
   }
   *{box-sizing:border-box;}
   body{
     margin:0;
     background:
-      radial-gradient(ellipse 900px 500px at 15% -10%, rgba(232,163,61,0.08), transparent),
-      radial-gradient(ellipse 700px 500px at 100% 10%, rgba(56,189,178,0.07), transparent),
+      radial-gradient(ellipse 700px 420px at 10% -8%, rgba(255,169,40,0.16), transparent),
+      radial-gradient(ellipse 600px 420px at 100% 0%, rgba(31,194,176,0.14), transparent),
+      radial-gradient(ellipse 700px 500px at 50% 100%, rgba(140,124,255,0.10), transparent),
       var(--bg);
     color:var(--ink);
-    font-family:'Manrope',sans-serif;
+    font-family:'Prompt',sans-serif;
     padding:20px 14px 60px;
     -webkit-font-smoothing:antialiased;
   }
   .wrap{max-width:720px;margin:0 auto;}
-  header{margin-bottom:18px;}
+  header{margin-bottom:16px;}
   header .eyebrow{
-    font-family:'Space Mono',monospace;
-    font-size:12px;
-    letter-spacing:.14em;
-    color:var(--amber);
+    font-family:'Prompt',sans-serif;
+    font-size:12px;font-weight:700;
+    letter-spacing:.1em;
+    color:var(--pink);
     text-transform:uppercase;
   }
-  h1{font-size:26px;margin:6px 0 4px;font-weight:800;letter-spacing:-0.01em;}
+  h1{font-family:'Mitr',sans-serif;font-size:27px;margin:6px 0 4px;font-weight:700;color:var(--ink);}
   header p{color:var(--ink-dim);font-size:14px;margin:0;line-height:1.5;}
+
+  .testcta{
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    background:linear-gradient(120deg,#FF9F45,#FF6FA5);
+    border-radius:18px;padding:16px 18px;margin:16px 0;cursor:pointer;
+    box-shadow:0 8px 20px rgba(255,111,165,0.35);
+  }
+  .testcta:active{transform:scale(0.98);}
+  .testcta .ttitle{font-family:'Mitr',sans-serif;color:#fff;font-weight:600;font-size:16.5px;}
+  .testcta .tsub{color:rgba(255,255,255,0.9);font-size:12.5px;margin-top:2px;}
+  .testcta .emoji{font-size:28px;}
 
   .grouprow{display:flex;gap:8px;margin:18px 0 10px;}
   .group{
-    flex:1;text-align:center;padding:10px 6px;border-radius:12px;
-    background:var(--panel);border:1px solid var(--line);cursor:pointer;
+    flex:1;text-align:center;padding:10px 6px;border-radius:14px;
+    background:var(--panel);border:2px solid var(--line);cursor:pointer;
   }
-  .group .gname{font-weight:800;font-size:13.5px;}
-  .group .gcount{font-family:'Space Mono',monospace;font-size:10.5px;color:var(--ink-dim);margin-top:2px;}
-  .group.active{border-color:var(--amber);background:rgba(232,163,61,0.1);}
-  .group.active .gname{color:var(--amber);}
-  .group[data-g="mid"].active{border-color:var(--teal);background:rgba(56,189,178,0.1);}
-  .group[data-g="mid"].active .gname{color:var(--teal);}
-  .group[data-g="hard"].active{border-color:var(--red);background:rgba(232,102,107,0.1);}
-  .group[data-g="hard"].active .gname{color:var(--red);}
+  .group .gname{font-family:'Mitr',sans-serif;font-weight:600;font-size:13.5px;color:var(--ink);}
+  .group .gcount{font-size:10.5px;color:var(--ink-dim);margin-top:2px;}
+  .group.active{border-color:var(--amber);background:#FFF3E0;}
+  .group.active .gname{color:#D9820A;}
+  .group[data-g="mid"].active{border-color:var(--teal);background:#E3FBF8;}
+  .group[data-g="mid"].active .gname{color:#0E9C8D;}
+  .group[data-g="hard"].active{border-color:var(--pink);background:#FFEAF3;}
+  .group[data-g="hard"].active .gname{color:#E0397E;}
 
   .tabs{display:flex;gap:8px;margin:0 0 14px;flex-wrap:wrap;}
   .tab{
-    flex:1 1 auto;background:var(--panel);border:1px solid var(--line);color:var(--ink-dim);
-    padding:10px 8px;border-radius:10px;font-weight:700;font-size:13px;text-align:center;cursor:pointer;
+    flex:1 1 auto;background:var(--panel);border:2px solid var(--line);color:var(--ink-dim);
+    padding:10px 8px;border-radius:14px;font-weight:600;font-size:13px;text-align:center;cursor:pointer;
   }
-  .tab small{display:block;font-weight:500;font-size:11px;margin-top:2px;opacity:.8;}
-  .tab.active{background:linear-gradient(160deg,var(--amber),#c9822b);color:#20140a;border-color:transparent;}
+  .tab small{display:block;font-weight:400;font-size:11px;margin-top:2px;opacity:.8;}
+  .tab.active{background:linear-gradient(150deg,var(--amber),#FF8A3D);color:#fff;border-color:transparent;box-shadow:0 4px 10px rgba(255,169,40,0.35);}
 
-  .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:14px;}
+  .card{background:var(--panel);border:2px solid var(--line);border-radius:20px;padding:18px;margin-bottom:14px;box-shadow:0 4px 16px rgba(140,180,220,0.15);}
   .explain{color:var(--ink-dim);font-size:14px;line-height:1.7;}
   .explain b{color:var(--ink);}
 
   .subtabs{display:flex;gap:6px;margin:14px 0;}
-  .subtab{background:var(--panel-2);border:1px solid var(--line);color:var(--ink-dim);padding:7px 14px;border-radius:999px;font-size:12.5px;font-weight:700;cursor:pointer;}
-  .subtab.active{background:var(--teal);color:#0b2624;border-color:transparent;}
+  .subtab{background:var(--panel-2);border:2px solid var(--line);color:var(--ink-dim);padding:7px 14px;border-radius:999px;font-size:12.5px;font-weight:600;cursor:pointer;}
+  .subtab.active{background:var(--teal);color:#fff;border-color:transparent;}
 
   .level-row{display:flex;gap:6px;margin-bottom:14px;}
-  .level-btn{flex:1;padding:8px 4px;border-radius:10px;border:1px solid var(--line);background:var(--panel-2);color:var(--ink-dim);font-size:12.5px;font-weight:700;cursor:pointer;text-align:center;}
-  .level-btn.active{border-color:var(--amber);color:var(--amber);background:rgba(232,163,61,0.1);}
+  .level-btn{flex:1;padding:9px 4px;border-radius:14px;border:2px solid var(--line);background:var(--panel-2);color:var(--ink-dim);font-size:12.5px;font-weight:600;cursor:pointer;text-align:center;}
+  .level-btn.active{border-color:var(--amber);color:#D9820A;background:#FFF3E0;}
   .level-btn .dot{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:5px;}
   .level-btn[data-lv="0"] .dot{background:var(--green);}
   .level-btn[data-lv="1"] .dot{background:var(--amber);}
   .level-btn[data-lv="2"] .dot{background:var(--red);}
 
-  .board{display:grid;grid-template-columns:repeat(9,1fr);width:100%;max-width:380px;aspect-ratio:1/1;margin:6px auto 4px;border:2.5px solid var(--line-thick);border-radius:8px;overflow:hidden;background:#101a24;}
-  .cell{display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:clamp(13px,4vw,19px);color:var(--ink-dim);border-right:1px solid var(--line);border-bottom:1px solid var(--line);position:relative;transition:box-shadow .35s ease;}
+  .board{display:grid;grid-template-columns:repeat(9,1fr);width:100%;max-width:380px;aspect-ratio:1/1;margin:6px auto 4px;border:3px solid var(--line-thick);border-radius:12px;overflow:hidden;background:#fff;}
+  .cell{display:flex;align-items:center;justify-content:center;font-family:'Prompt',sans-serif;font-weight:600;font-size:clamp(13px,4vw,19px);color:var(--ink-dim);border-right:1px solid var(--line);border-bottom:1px solid var(--line);position:relative;transition:box-shadow .35s ease;}
   .cell.thick-r{border-right:2px solid var(--line-thick);}
   .cell.thick-b{border-bottom:2px solid var(--line-thick);}
-  .cell.given{color:#fff;font-weight:700;}
+  .cell.given{color:var(--ink);font-weight:700;}
   .cell.target{color:var(--ink-dim);}
-  .cell.target::after{content:"";position:absolute;inset:4px;border:1.5px dashed var(--ink-dim);border-radius:5px;opacity:.5;}
-  .cell.target.clickable::after{border-color:var(--amber);opacity:.9;}
-  .cell.reveal{color:var(--amber);font-weight:700;animation:pop .4s ease;}
+  .cell.target::after{content:"";position:absolute;inset:4px;border:2px dashed #C9DEF0;border-radius:7px;}
+  .cell.target.clickable::after{border-color:var(--amber);border-style:dashed;}
+  .cell.reveal{color:#D9820A;font-weight:700;animation:pop .4s ease;}
   .cell.reveal::after{display:none;}
-  .cell.userval{color:#fff;font-weight:700;}
+  .cell.userval{color:var(--ink);font-weight:700;}
   .cell.userval.correct{color:var(--green);}
-  .cell.userval.correct::after{border-color:var(--green);opacity:1;}
+  .cell.userval.correct::after{border-color:var(--green);border-style:solid;}
   .cell.userval.wrong{color:var(--red);}
-  .cell.userval.wrong::after{border-color:var(--red);opacity:1;}
+  .cell.userval.wrong::after{border-color:var(--red);border-style:solid;}
   @keyframes pop{0%{transform:scale(0.5);opacity:0;}70%{transform:scale(1.15);}100%{transform:scale(1);opacity:1;}}
   .shake{animation:shake .35s;}
   @keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-4px);}75%{transform:translateX(4px);}}
 
   .pencil{position:absolute;inset:2px;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);}
-  .pencil span{display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:clamp(6.5px,2vw,9.5px);color:var(--ink-dim);opacity:.75;}
-  .pencil span.hl{color:var(--amber);font-weight:800;opacity:1;transform:scale(1.2);}
-  .pencil span.gone{color:var(--red);text-decoration:line-through;opacity:.45;}
+  .pencil span{display:flex;align-items:center;justify-content:center;font-family:'Prompt',sans-serif;font-size:clamp(6.5px,2vw,9.5px);color:var(--ink-dim);opacity:.8;font-weight:500;}
+  .pencil span.hl{color:#D9820A;font-weight:800;opacity:1;transform:scale(1.2);}
+  .pencil span.gone{color:var(--red);text-decoration:line-through;opacity:.5;}
 
-  .caption{background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:13.5px;line-height:1.6;color:var(--ink);min-height:46px;margin:12px 0;}
+  .caption{background:var(--panel-2);border:2px solid var(--line);border-radius:14px;padding:12px 14px;font-size:13.5px;line-height:1.6;color:var(--ink);min-height:46px;margin:12px 0;}
   .step-controls{display:flex;align-items:center;justify-content:space-between;gap:10px;}
-  .step-controls .stepnum{font-family:'Space Mono',monospace;font-size:12px;color:var(--ink-dim);}
-  button.nav{background:var(--panel-2);border:1px solid var(--line);color:var(--ink);padding:8px 14px;border-radius:9px;font-weight:700;font-size:13px;cursor:pointer;}
-  button.nav.primary{background:var(--amber);color:#20140a;border-color:transparent;}
+  .step-controls .stepnum{font-size:12px;color:var(--ink-dim);font-weight:600;}
+  button.nav{background:var(--panel-2);border:2px solid var(--line);color:var(--ink);padding:8px 14px;border-radius:12px;font-weight:600;font-size:13px;cursor:pointer;}
+  button.nav.primary{background:var(--amber);color:#fff;border-color:transparent;}
   button.nav:disabled{opacity:.35;cursor:default;}
 
   .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--ink-dim);margin-top:10px;}
   .legend span{display:inline-flex;align-items:center;gap:5px;}
-  .sw{width:11px;height:11px;border-radius:3px;display:inline-block;}
+  .sw{width:11px;height:11px;border-radius:4px;display:inline-block;}
 
   .numpad{display:grid;grid-template-columns:repeat(9,1fr);gap:6px;margin:14px 0 10px;}
-  .numbtn{aspect-ratio:1/1;background:var(--panel-2);border:1px solid var(--line);color:var(--ink);border-radius:8px;font-family:'Space Mono',monospace;font-weight:700;font-size:15px;cursor:pointer;}
-  .numbtn.sel{background:var(--teal);color:#0b2624;border-color:transparent;}
+  .numbtn{aspect-ratio:1/1;background:var(--panel-2);border:2px solid var(--line);color:var(--ink);border-radius:10px;font-family:'Prompt',sans-serif;font-weight:700;font-size:15px;cursor:pointer;}
+  .numbtn.sel{background:var(--teal);color:#fff;border-color:transparent;}
   .actionrow{display:flex;gap:8px;margin-top:6px;}
-  .actionrow button{flex:1;padding:10px;border-radius:10px;border:none;font-weight:700;font-size:13.5px;cursor:pointer;}
-  .btn-check{background:var(--green);color:#0a2417;}
-  .btn-hint{background:var(--panel-2);color:var(--ink);border:1px solid var(--line) !important;}
-  .btn-reveal{background:var(--panel-2);color:var(--ink-dim);border:1px solid var(--line) !important;}
-  .feedback{margin-top:10px;font-size:13.5px;border-radius:10px;padding:10px 12px;display:none;line-height:1.6;}
-  .feedback.ok{display:block;background:rgba(95,208,138,0.12);color:var(--green);border:1px solid rgba(95,208,138,0.35);}
-  .feedback.bad{display:block;background:rgba(232,102,107,0.1);color:var(--red);border:1px solid rgba(232,102,107,0.3);}
-  .feedback.hint{display:block;background:rgba(232,163,61,0.1);color:var(--amber);border:1px solid rgba(232,163,61,0.3);}
+  .actionrow button{flex:1;padding:11px;border-radius:14px;border:none;font-weight:700;font-size:13.5px;cursor:pointer;}
+  .btn-check{background:var(--green);color:#fff;}
+  .btn-hint{background:var(--panel-2);color:var(--ink);border:2px solid var(--line) !important;}
+  .btn-reveal{background:var(--panel-2);color:var(--ink-dim);border:2px solid var(--line) !important;}
+  .feedback{margin-top:10px;font-size:13.5px;border-radius:14px;padding:10px 12px;display:none;line-height:1.6;}
+  .feedback.ok{display:block;background:#E7FBEE;color:#1D9C50;border:2px solid #BEF0CF;}
+  .feedback.bad{display:block;background:#FFECEE;color:#E0384D;border:2px solid #FFC9D0;}
+  .feedback.hint{display:block;background:#FFF3E0;color:#D9820A;border:2px solid #FFDFA8;}
+
+  .testbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+  .backbtn{background:var(--panel-2);border:2px solid var(--line);color:var(--ink);padding:8px 14px;border-radius:12px;font-weight:600;font-size:13px;cursor:pointer;}
+  .digitpick{display:grid;grid-template-columns:repeat(9,1fr);gap:6px;margin:10px 0 16px;}
+  .digitpick .dbtn{aspect-ratio:1/1;background:var(--panel-2);border:2px solid var(--line);color:var(--ink);border-radius:12px;font-weight:700;font-size:16px;cursor:pointer;}
+  .digitpick .dbtn.on{background:linear-gradient(150deg,var(--pink),#FF9F45);color:#fff;border-color:transparent;}
+  .progresswrap{background:var(--panel-2);border-radius:999px;height:14px;overflow:hidden;margin:12px 0 6px;border:2px solid var(--line);}
+  .progressfill{height:100%;background:linear-gradient(90deg,var(--teal),var(--green));border-radius:999px;transition:width .3s ease;}
+  .progresslabel{text-align:center;font-size:13px;color:var(--ink-dim);font-weight:600;margin-bottom:4px;}
+  .winbanner{text-align:center;padding:18px;background:linear-gradient(135deg,#FFF3E0,#E3FBF8);border-radius:16px;margin-top:14px;}
+  .winbanner .big{font-size:38px;}
+  .winbanner .msg{font-family:'Mitr',sans-serif;font-weight:600;color:var(--ink);margin-top:6px;font-size:15px;}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
     <div class="eyebrow">Sudoku Dojo · ไม่บันทึกข้อมูล</div>
-    <h1>ครูซูโดกุ</h1>
+    <h1>ครูซูโดกุ 🧩</h1>
     <p>เลือกระดับ → เลือกเทคนิค → ดูสาธิตทีละขั้น แล้วลองทำโจทย์จริงตั้งแต่ง่ายถึงยาก</p>
   </header>
 
-  <div class="grouprow" id="groupRow"></div>
-  <div class="tabs" id="techTabs"></div>
-  <div id="techPanel"></div>
+  <div class="testcta" onclick="openTest()">
+    <div>
+      <div class="ttitle">🎯 โหมดทดสอบจริง</div>
+      <div class="tsub">เลือกเลข แล้วหาให้ครบทั้ง 9 ช่องในกระดานเดียว เหมือนโจทย์เพจดัง</div>
+    </div>
+    <div class="emoji">▶️</div>
+  </div>
+
+  <div id="normalArea">
+    <div class="grouprow" id="groupRow"></div>
+    <div class="tabs" id="techTabs"></div>
+    <div id="techPanel"></div>
+  </div>
+  <div id="testArea" style="display:none;"></div>
 </div>
 
 <script>
@@ -323,7 +359,24 @@ const TECHS = [
 },
 ];
 
+const SOLUTION = [
+  [5,3,4,6,7,8,9,1,2],
+  [6,7,2,1,9,5,3,4,8],
+  [1,9,8,3,4,2,5,6,7],
+  [8,5,9,7,6,1,4,2,3],
+  [4,2,6,8,5,3,7,9,1],
+  [7,1,3,9,2,4,8,5,6],
+  [9,6,1,5,3,7,2,8,4],
+  [2,8,7,4,1,9,6,3,5],
+  [3,4,5,2,8,6,1,7,9],
+];
+
 let curGroup='basic', curTech=0, curMode='demo', curStep=0, curLevel=0, selDigit=null;
+let inTest=false, testDigit=null, testFound=new Set();
+
+function openTest(){ inTest=true; testDigit=null; testFound=new Set(); renderRoot(); }
+function closeTest(){ inTest=false; renderRoot(); }
+function pickTestDigit(d){ testDigit=d; testFound=new Set(); renderRoot(); }
 
 function techsInGroup(g){ return TECHS.map((t,i)=>({...t,idx:i})).filter(t=>t.group===g); }
 
@@ -340,7 +393,7 @@ function setGroup(g){
   curGroup=g;
   curTech = techsInGroup(g)[0].idx;
   curMode='demo'; curStep=0; curLevel=0; selDigit=null;
-  render();
+  renderRoot();
 }
 function techTabs(){
   const el=document.getElementById('techTabs');
@@ -349,17 +402,17 @@ function techTabs(){
     <div class="tab ${t.idx===curTech?'active':''}" onclick="setTech(${t.idx})">${t.name}<small>${t.sub}</small></div>
   `).join('');
 }
-function setTech(i){ curTech=i; curMode='demo'; curStep=0; curLevel=0; selDigit=null; render(); }
-function setMode(m){ curMode=m; curStep=0; curLevel=0; selDigit=null; render(); }
-function setLevel(i){ curLevel=i; selDigit=null; render(); }
+function setTech(i){ curTech=i; curMode='demo'; curStep=0; curLevel=0; selDigit=null; renderRoot(); }
+function setMode(m){ curMode=m; curStep=0; curLevel=0; selDigit=null; renderRoot(); }
+function setLevel(i){ curLevel=i; selDigit=null; renderRoot(); }
 
 function cellShadow(r,c,hi){
   if(!hi) return '';
   const parts=[];
-  if(hi.rows && hi.rows.includes(r)) parts.push('inset 0 0 0 999px rgba(232,163,61,0.22)');
-  if(hi.cols && hi.cols.includes(c)) parts.push('inset 0 0 0 999px rgba(56,189,178,0.20)');
-  if(hi.boxes){ for(const [br,bc] of hi.boxes){ if(r>=br&&r<br+3&&c>=bc&&c<bc+3) parts.push('inset 0 0 0 999px rgba(167,139,250,0.20)'); } }
-  if(hi.cells && hi.cells.some(([rr,cc])=>rr===r&&cc===c)) parts.push('inset 0 0 0 999px rgba(232,163,61,0.30)');
+  if(hi.rows && hi.rows.includes(r)) parts.push('inset 0 0 0 999px rgba(255,169,40,0.30)');
+  if(hi.cols && hi.cols.includes(c)) parts.push('inset 0 0 0 999px rgba(31,194,176,0.26)');
+  if(hi.boxes){ for(const [br,bc] of hi.boxes){ if(r>=br&&r<br+3&&c>=bc&&c<bc+3) parts.push('inset 0 0 0 999px rgba(140,124,255,0.26)'); } }
+  if(hi.cells && hi.cells.some(([rr,cc])=>rr===r&&cc===c)) parts.push('inset 0 0 0 999px rgba(255,169,40,0.38)');
   return parts.join(',');
 }
 
@@ -414,9 +467,9 @@ function buildBoard(opts){
 
 function legendHTML(){
   return `<div class="legend">
-    <span><span class="sw" style="background:rgba(232,163,61,0.6)"></span>แถว</span>
-    <span><span class="sw" style="background:rgba(56,189,178,0.6)"></span>คอลัมน์</span>
-    <span><span class="sw" style="background:rgba(167,139,250,0.6)"></span>บล็อก 3x3</span>
+    <span><span class="sw" style="background:rgba(255,169,40,0.7)"></span>แถว</span>
+    <span><span class="sw" style="background:rgba(31,194,176,0.7)"></span>คอลัมน์</span>
+    <span><span class="sw" style="background:rgba(140,124,255,0.7)"></span>บล็อก 3x3</span>
   </div>`;
 }
 
@@ -446,7 +499,7 @@ function renderDemo(t){
 function stepDemo(d){
   const t=TECHS[curTech];
   curStep = Math.max(0, Math.min(t.demo.steps.length-1, curStep+d));
-  render();
+  renderRoot();
 }
 
 let practiceState = {};
@@ -486,14 +539,14 @@ function renderPractice(t){
 function pickDigit(n){
   const t=TECHS[curTech]; const stKey=t.id+'-'+curLevel;
   if(practiceState[stKey] && practiceState[stKey].status==='correct') return;
-  selDigit = n; render();
+  selDigit = n; renderRoot();
 }
 function checkAnswer(){
   if(selDigit===null) return;
   const t=TECHS[curTech]; const p=t.practice[curLevel]; const stKey=t.id+'-'+curLevel;
   const correct = selDigit===p.answer;
   practiceState[stKey] = {digit:selDigit, status: correct?'correct':'wrong', showHint:false};
-  render();
+  renderRoot();
   if(!correct){
     setTimeout(()=>{
       const cellEl = document.getElementById(`cell-${p.target.r}-${p.target.c}`);
@@ -505,16 +558,92 @@ function revealAnswer(){
   const t=TECHS[curTech]; const p=t.practice[curLevel]; const stKey=t.id+'-'+curLevel;
   selDigit = p.answer;
   practiceState[stKey] = {digit:p.answer, status:'correct', showHint:false};
-  render();
+  renderRoot();
 }
 function showHint(){
   const t=TECHS[curTech]; const stKey=t.id+'-'+curLevel;
   const st = practiceState[stKey] || {};
   practiceState[stKey] = {...st, showHint:true};
-  render();
+  renderRoot();
 }
 
-function render(){
+// ---------- REAL TEST MODE ----------
+function testCellClick(r,c){
+  if(testDigit===null) return;
+  if(testFound.has(r+','+c)) return;
+  if(SOLUTION[r][c]===testDigit){
+    testFound.add(r+','+c);
+    renderRoot();
+  } else {
+    const el = document.getElementById(`tcell-${r}-${c}`);
+    if(el){ el.classList.add('shake'); setTimeout(()=>el.classList.remove('shake'), 350); }
+  }
+}
+function renderTest(){
+  const el = document.getElementById('testArea');
+  const digitPickHTML = Array.from({length:9},(_,i)=>i+1).map(n=>
+    `<div class="dbtn ${testDigit===n?'on':''}" onclick="pickTestDigit(${n})">${n}</div>`
+  ).join('');
+
+  if(testDigit===null){
+    el.innerHTML = `
+      <div class="testbar"><button class="backbtn" onclick="closeTest()">← กลับ</button></div>
+      <div class="card">
+        <div class="explain"><b>โหมดทดสอบจริง</b> — เลือกเลข 1 ตัวที่อยากเทส แล้วหาให้ครบว่าเลขนั้นควรอยู่ช่องไหนบ้างในกระดาน (ทั้งหมด 9 ช่อง) เหมือนโจทย์เพจดังที่ส่งมา ไม่มีตัวเลือกให้กดผิด ใช้หลักการแถว/คอลัมน์/บล็อกล้วนๆ</div>
+        <div class="digitpick">${digitPickHTML}</div>
+      </div>`;
+    return;
+  }
+
+  let html = '<div class="board">';
+  for(let r=0;r<9;r++){
+    for(let c=0;c<9;c++){
+      const val = SOLUTION[r][c];
+      const key = r+','+c;
+      let classes=['cell'];
+      if(c%3===2 && c!==8) classes.push('thick-r');
+      if(r%3===2 && r!==8) classes.push('thick-b');
+      let content='';
+      if(val===testDigit){
+        if(testFound.has(key)){
+          classes.push('userval','correct');
+          content = val;
+        } else {
+          classes.push('target','clickable');
+          content = '';
+        }
+      } else {
+        classes.push('given');
+        content = val;
+      }
+      html += `<div class="${classes.join(' ')}" id="tcell-${r}-${c}" onclick="testCellClick(${r},${c})" style="cursor:${val===testDigit && !testFound.has(key) ? 'pointer':'default'}">${content}</div>`;
+    }
+  }
+  html += '</div>';
+
+  const pct = Math.round(testFound.size/9*100);
+  const done = testFound.size===9;
+
+  el.innerHTML = `
+    <div class="testbar">
+      <button class="backbtn" onclick="closeTest()">← กลับ</button>
+      <button class="backbtn" onclick="pickTestDigit(null)">🔄 เปลี่ยนเลข</button>
+    </div>
+    <div class="card">
+      <div class="explain">หาช่องทั้งหมดที่ควรใส่เลข <b>${testDigit}</b> ในกระดานนี้ แตะช่องว่างที่คิดว่าใช่ได้เลย</div>
+      ${html}
+      <div class="progresslabel">เจอแล้ว ${testFound.size} / 9</div>
+      <div class="progresswrap"><div class="progressfill" style="width:${pct}%"></div></div>
+      ${done ? `<div class="winbanner"><div class="big">🎉🧩🎉</div><div class="msg">เก่งมาก! หาเลข ${testDigit} ครบทั้ง 9 ช่องแล้ว</div></div>` : ''}
+    </div>
+  `;
+}
+
+function renderRoot(){
+  document.getElementById('normalArea').style.display = inTest ? 'none' : 'block';
+  document.getElementById('testArea').style.display = inTest ? 'block' : 'none';
+  if(inTest){ renderTest(); return; }
+
   groupRow();
   techTabs();
   const t = TECHS[curTech];
@@ -530,7 +659,7 @@ function render(){
     </div>
   `;
 }
-render();
+renderRoot();
 </script>
 </body>
 </html>
