@@ -1924,6 +1924,17 @@ body.dark mark{background:rgba(90,175,240,.26)}
 #login .lgnote{font-size:12px;color:var(--ink3);margin:14px 0 0}
 #login button[disabled]{opacity:.45}
 </style>
+<style id="skin45">
+/* Ver.51 — โหมดทดลอง + บรรทัดบอกบัญชีท้ายหน้าแรก */
+#login .lgdemo{background:transparent;color:var(--ink2);font-weight:500;margin-top:2px}
+.acctline{text-align:center;font-size:11.5px;color:var(--ink3);padding:0 0 8px;line-height:1.5}
+.acctline b{font-weight:500;color:var(--ink2)}
+.acctline.demo{color:var(--out);font-weight:600;font-size:12px;background:var(--out-tint);
+  border:1px solid color-mix(in srgb,var(--out) 26%,transparent);border-radius:12px;
+  padding:8px 10px;margin:0 0 10px}
+.acctline:empty{display:none}
+.setrow-out .a{color:var(--out)}
+</style>
 </head>
 <body>
 <div class="wall"><i class="w1"></i><i class="w2"></i><i class="w3"></i></div>
@@ -1938,6 +1949,7 @@ body.dark mark{background:rgba(90,175,240,.26)}
 </header>
 
 <main class="page" id="page-home">
+  <div class="acctline" id="acctLine"></div>
   <div class="bento">
     <section class="hero tile wide">
       <div class="lb">เงินที่มีอยู่ตอนนี้</div>
@@ -2084,6 +2096,7 @@ body.dark mark{background:rgba(90,175,240,.26)}
   <div class="lgf"><input type="password" id="lgPw" placeholder="รหัสผ่าน" autocomplete="current-password"></div>
   <div class="lgmsg" id="lgMsg"></div>
   <button class="btn btn-main" id="lgBtn" onclick="doLogin()">เข้าสู่ระบบ</button>
+  <button class="btn lgdemo" onclick="demoStart()">ดูตัวอย่าง ไม่ต้องเข้าสู่ระบบ</button>
   <p class="lgnote">ยังไม่มีระบบรีเซ็ตรหัสผ่าน เก็บรหัสไว้ให้ดี</p>
 </div>
 
@@ -2205,6 +2218,7 @@ function save(){_sugCache=null;try{LS.setItem(KEY,JSON.stringify(D));}catch(e){t
    ของจริงอยู่บนเซิร์ฟเวอร์ — เปิดแอป = ดึงลงมาทับ, กดบันทึก = ส่งขึ้น */
 var SB_URL='https://yffuzlmmddyaqenkujwk.supabase.co';
 var SB_KEY='sb_publishable_R2HAmFvoFoQd5NKZjLwzvQ_PLoSETVL';
+var DEMO=false,_sbSynced=false;
 var SB=null,_sbUid='',_sbMail='',_sbIds={},_sbT=null,_sbBusy=false,_sbAgain=false;
 function sbReady(){
   if(SB)return SB;
@@ -2212,7 +2226,7 @@ function sbReady(){
   SB=window.supabase.createClient(SB_URL,SB_KEY);
   return SB;
 }
-function sbQueue(){ if(!_sbUid)return; clearTimeout(_sbT); _sbT=setTimeout(sbPush,800); }
+function sbQueue(){ if(!_sbUid||!_sbSynced)return; clearTimeout(_sbT); _sbT=setTimeout(sbPush,800); }
 function sbRow(e){
   return {id:e.id,name:e.name||'',amount:Number(e.amount)||0,
           type:e.type==='in'?'in':'out',cat:e.cat||null,date:e.date,
@@ -2278,10 +2292,71 @@ function sbPull(){
                 type:x.type,cat:x.cat||'',date:x.date};
       });
       _sbIds={}; d.entries.forEach(function(x){_sbIds[x.id]=1;});
+      _sbSynced=true;
       LS.setItem(KEY,JSON.stringify(d));
       D=load();
     });
   });
+}
+function demoSeed(){
+  var out=[['ข้าวกะเพรา',60,'อาหาร-เครื่องดื่ม'],['กาแฟเย็น',45,'อาหาร-เครื่องดื่ม'],
+   ['กับข้าวเย็น',120,'อาหาร-เครื่องดื่ม'],['ผลไม้',80,'อาหาร-เครื่องดื่ม'],
+   ['น้ำมันมอเตอร์ไซค์',100,'เดินทาง-น้ำมัน'],['ค่าวิน',40,'เดินทาง-น้ำมัน'],
+   ['ผงซักฟอก',89,'ของใช้ในบ้าน'],['ทิชชู่',59,'ของใช้ในบ้าน'],
+   ['ยาแก้ไข้',75,'สุขภาพ-ยา'],['ขนมเด็ก',35,'อาหาร-เครื่องดื่ม']];
+  var big=[['ค่าไฟ',680,'ค่าน้ำค่าไฟ-เน็ต'],['ค่าน้ำ',180,'ค่าน้ำค่าไฟ-เน็ต'],
+   ['ค่าเน็ต',599,'ค่าน้ำค่าไฟ-เน็ต']];
+  var es=[],n=0,d=new Date();
+  d.setDate(d.getDate()-59);
+  function push(dt,name,amt,cat,type){
+    es.push({id:'demo'+(n++),name:name,amount:amt,type:type||'out',cat:cat,date:dkey(dt)});
+  }
+  for(var i=0;i<60;i++){
+    var dt=new Date(d); dt.setDate(d.getDate()+i);
+    var cnt=2+((i*7)%3);
+    for(var j=0;j<cnt;j++){
+      var it=out[(i*3+j)%out.length];
+      push(dt,it[0],it[1]+((i*j*3)%20),it[2]);
+    }
+    if(dt.getDate()===5){ big.forEach(function(b){ push(dt,b[0],b[1],b[2]); }); }
+    if(i%7===2) push(dt,'ขายของหน้าบ้าน',900+((i*13)%400),'ขายของ','in');
+    if(dt.getDate()===1) push(dt,'เงินเดือน',12000,'เงินเดือน','in');
+  }
+  var FOOD='อาหาร-เครื่องดื่ม', TRIP='เดินทาง-น้ำมัน';
+  return {opening:3500,entries:es,setup:true,pins:[
+    {n:'กาแฟ',cat:FOOD,type:'out',last:45},
+    {n:'ข้าวเที่ยง',cat:FOOD,type:'out',last:60},
+    {n:'น้ำมัน',cat:TRIP,type:'out',last:100}]};
+}
+function demoStart(){
+  DEMO=true; _sbUid=''; _sbMail='';
+  KEY='fam_demo';
+  if(!LS.getItem(KEY))LS.setItem(KEY,JSON.stringify(demoSeed()));
+  D=load();
+  document.getElementById('login').classList.add('hide');
+  startApp();
+  toast('โหมดทดลอง — ข้อมูลทั้งหมดเป็นตัวอย่าง','info');
+}
+function demoExit(){
+  askConfirm('ออกจากโหมดทดลอง?','ข้อมูลตัวอย่างทั้งหมดจะถูกล้างทิ้ง','',function(){
+    LS.removeItem('fam_demo'); location.reload();
+  });
+}
+function acctLine(){
+  var e=document.getElementById('acctLine'); if(!e)return;
+  if(DEMO){ e.className='acctline demo'; e.textContent='โหมดทดลอง · ข้อมูลทั้งหมดเป็นตัวอย่าง ไม่ได้เก็บขึ้นเซิร์ฟเวอร์'; return; }
+  if(_sbUid&&!_sbSynced){
+    e.className='acctline demo';
+    e.textContent='ต่อเซิร์ฟเวอร์ไม่ได้ · ที่แก้ตอนนี้จะยังไม่ถูกบันทึก ลองเปิดแอปใหม่';
+    return;
+  }
+  e.className='acctline';
+  e.innerHTML=_sbMail?('เข้าใช้ด้วย <b>'+esc(shortMail(_sbMail))+'</b>'):'';
+}
+function shortMail(m){
+  var a=String(m).split('@'); if(a.length<2)return m;
+  if(a[0].length>10)a[0]=a[0].slice(0,7)+'…';
+  return a[0]+'@'+a[1];
 }
 function lgMsg(t){ var e=document.getElementById('lgMsg'); if(e)e.textContent=t||''; }
 function lgBusy(b){ var e=document.getElementById('lgBtn'); if(e)e.disabled=!!b; }
@@ -2299,6 +2374,7 @@ function doLogin(){
   });
 }
 function sbLogout(){
+  if(DEMO)return demoExit();
   askConfirm('ออกจากระบบ?','ข้อมูลอยู่บนเซิร์ฟเวอร์ เข้าสู่ระบบใหม่เมื่อไหร่ก็เห็นเหมือนเดิม','',function(){
     var sb=sbReady();
     var done=function(){ LS.removeItem(KEY); location.reload(); };
@@ -3273,6 +3349,7 @@ function countTo(el,from,to,pre){
 }
 
 function renderHome(){
+  acctLine();
   var b=balance(),el=document.getElementById('balNum');
   countUp(el,_lastBal===null?b:_lastBal,b);_lastBal=b;
   /* Ver.27: จดใหม่เสร็จ ยอดวูบเป็นสีเขียวแวบเดียว บอกว่าเข้าแล้วนะ
@@ -4731,9 +4808,6 @@ function renderSet(){
    +srow(ICO.tag,'หมวดรายจ่าย','',nOut+' หมวด','openCats(\'out\')')
    +srow(ICO.tag,'หมวดรายรับ','',nIn+' หมวด','openCats(\'in\')')
    +'</div></div>';
-  h+='<div class="sgrp"><div class="gt">บัญชี</div><div class="slist">'
-   +srow(ICO.user,'บัญชีที่ใช้อยู่',_sbErr?'ซิงก์ล่าสุดไม่สำเร็จ':'ข้อมูลซิงก์ขึ้นเซิร์ฟเวอร์อัตโนมัติ',_sbMail,'sbLogout()')
-   +'</div></div>';
   h+='<div class="sgrp"><div class="gt">ข้อมูล</div><div class="slist">'
    +srow(ICO.save,'สำรองข้อมูล','เก็บไฟล์ไว้ หรือเอาไฟล์เก่ากลับเข้ามา',D.backupAt?thDate(dkey(new Date(D.backupAt))):'ยังไม่เคย','openBackup()')
    +'</div></div>';
@@ -4744,7 +4818,12 @@ function renderSet(){
      +srow(ICO.trash,'ลบรายการทั้งหมด','เอากลับไม่ได้ สำรองไฟล์ก่อนดีกว่า','','wipeAll()')
    :'')
    +'</div></div>';
-  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.50 · ข้อมูลเก็บบนบัญชีของคุณ</div>';
+  h+='<div class="sgrp"><div class="gt">บัญชี</div><div class="slist">'
+   +srow(ICO.user,DEMO?'ออกจากโหมดทดลอง':'ออกจากระบบ',
+      DEMO?'ล้างข้อมูลตัวอย่างทิ้ง กลับไปจอเข้าสู่ระบบ':(_sbErr?'ซิงก์ล่าสุดไม่สำเร็จ':shortMail(_sbMail)),
+      '','sbLogout()','<span class="sgo">›</span>')
+   +'</div></div>';
+  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.51 · '+(DEMO?'โหมดทดลอง':'ข้อมูลเก็บบนบัญชีของคุณ')+'</div>';
   document.getElementById('setBody').innerHTML=h;
 }
 function toggleAdv(){advOpen=!advOpen;buzz(8);renderSet();}
