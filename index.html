@@ -1935,6 +1935,42 @@ body.dark mark{background:rgba(90,175,240,.26)}
 .acctline:empty{display:none}
 .setrow-out .a{color:var(--out)}
 </style>
+<style id="skin46">
+/* Ver.53 */
+/* ป้ายคนที่ล็อกอิน แทนที่ปุ่มสำรองข้อมูลมุมขวาบน */
+.who{display:flex;align-items:center;gap:7px;border:0;background:transparent;padding:3px 4px 3px 3px;
+  max-width:132px;cursor:pointer}
+.who .wav{flex:0 0 26px;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;
+  background:var(--accent,var(--in));color:#fff;font-size:12.5px;font-weight:600;line-height:1;
+  text-transform:uppercase;box-shadow:0 0 0 2px var(--card)}
+.who .wnm{font-size:12px;color:var(--ink2);font-weight:500;white-space:nowrap;overflow:hidden;
+  text-overflow:ellipsis;min-width:0}
+.who.demo .wav{background:var(--out)}
+.who.warn .wav{background:var(--out)}
+.who.warn .wnm{color:var(--out)}
+/* เวลาที่ลงรายการ */
+.line .t2 .tstamp{font-style:normal;color:var(--ink3);font-variant-numeric:tabular-nums}
+.line .t2 .tstamp:before{content:"·";margin:0 4px;color:var(--line2)}
+/* แท่งกราฟแยกหมวด */
+.bar.split{display:flex;flex-direction:column-reverse}
+/* ห้าม overflow:hidden — ตัวเลขบนหัวแท่ง (.bnum) วางด้วย bottom:100% จะโดนตัดหาย
+   ให้ชิ้นล่างสุด/บนสุดรับมุมโค้งของแท่งไปแทน */
+.bar.split .bseg{display:block;width:100%;min-height:1px}
+.bar.split .bseg:first-child{border-radius:0 0 3px 3px}
+.bar.split .bseg:last-child{border-radius:6px 6px 0 0}
+.bar.split .bseg+.bseg{box-shadow:0 1px 0 0 rgba(255,255,255,.5) inset}
+.legend.cats span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:33%}
+/* จอเข้าสู่ระบบ */
+#login .lgbrand{font-family:"Kanit",sans-serif;font-size:30px;font-weight:600;letter-spacing:-.5px;
+  margin:2px 0 4px}
+#login .lgtag{font-size:13px;color:var(--ink3);line-height:1.65;margin:0 0 20px;max-width:290px}
+#login .lgor{display:flex;align-items:center;gap:10px;margin:14px 0 10px;color:var(--ink3);font-size:11.5px}
+#login .lgor:before,#login .lgor:after{content:"";flex:1;height:1px;background:var(--line2)}
+#login .lgdemo{background:transparent;color:var(--ink);border:1px solid var(--line2);font-weight:500}
+#login .lgdemo:active{background:var(--card2,var(--line))}
+/* แถวสวิตช์ของการ์ดโดนัท */
+#sumSel{margin:0 0 12px}
+</style>
 </head>
 <body>
 <div class="wall"><i class="w1"></i><i class="w2"></i><i class="w3"></i></div>
@@ -1944,12 +1980,11 @@ body.dark mark{background:rgba(90,175,240,.26)}
   <div class="trow">
     <span class="mark" aria-hidden="true"><svg class="mkicon" viewBox="0 0 40 40" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round"><path d="M3.6 40c.6-6.4 4.6-10.4 9.4-11.4"/><path d="M36.6 40c-.6-6.4-4.6-10.4-9.4-11.4"/><path d="M9.6 32.4 12.6 40M30.6 32.4 27.6 40"/><path d="M13.9 8.9 10 9.1 6.9 12.6l.7 4 3.3 1-1-4.4Z"/><path d="M26.3 8.9l3.9.2 3.1 3.5-.7 4-3.3 1 1-4.4Z"/><path d="M20.1 8.6c6.2 0 11.2 5.6 11.2 12.4S26.3 33.4 20.1 33.4 8.9 27.8 8.9 21 13.9 8.6 20.1 8.6Z"/><path d="M13.2 13.4 16.4 14.8M27 13.4 23.8 14.8"/><path stroke-width=".8" d="M22.6 10 24.3 13.6M21.9 10.9l1.7-.7M22.5 12.2l1.7-.7M23.1 13.5l1.7-.7"/><path d="M10.2 15.8h8.8v2.9c0 1.5-1.2 2.6-2.8 2.6h-3.4c-1.6 0-2.6-1.1-2.6-2.6Z"/><path d="M21.2 15.8h8.8v2.9c0 1.5-1 2.6-2.6 2.6h-3.4c-1.6 0-2.8-1.1-2.8-2.6Z"/><path d="M19 16.5h2.2"/><path d="M26.6 25.2c.5 3.2-1.4 6-4 6.8"/><path class="mksn" fill="currentColor" d="M19.9 18.2c2.7 0 4.4 1.4 4.4 3.2s-1.7 3.3-4.4 3.3-4.4-1.5-4.4-3.3 1.7-3.2 4.4-3.2Z"/><ellipse cx="18.3" cy="21" rx=".7" ry="1.6"/><ellipse cx="21.3" cy="21" rx=".7" ry="1.6"/><rect class="mksn" fill="currentColor" x="0" y="-1.25" width="10.6" height="2.5" rx="1" transform="translate(11.2 29.2) rotate(-28.8)"/><circle class="mksn" fill="currentColor" cx="11.9" cy="28.9" r="1.35"/><circle cx="11.9" cy="28.9" r=".45"/></g></svg></span>
     <span class="brand"><b>Muifei</b><i class="today" id="todayLbl">บัญชีรับ-จ่ายในบ้าน</i></span>
-    <button class="bk tap" id="bkChip" onclick="openBackup()">สำรองข้อมูล</button>
+    <button class="who tap" id="whoChip" onclick="whoTap()" aria-label="บัญชี"><span class="wav" id="whoAv">M</span><span class="wnm" id="whoNm"></span></button>
   </div>
 </header>
 
 <main class="page" id="page-home">
-  <div class="acctline" id="acctLine"></div>
   <div class="bento">
     <section class="hero tile wide">
       <div class="lb">เงินที่มีอยู่ตอนนี้</div>
@@ -1968,7 +2003,8 @@ body.dark mark{background:rgba(90,175,240,.26)}
   </section>
 
   <section class="card">
-    <div class="ct"><h2>เดือนนี้จ่ายไปกับอะไร</h2><span class="sub" id="sumSub"></span></div>
+    <div class="ct"><h2 id="sumTitle">จ่ายไปกับอะไร</h2><span class="sub" id="sumSub"></span></div>
+    <div class="selrow" id="sumSel"></div>
     <div id="sumBody"></div>
   </section>
 
@@ -2090,13 +2126,15 @@ body.dark mark{background:rgba(90,175,240,.26)}
 
 <div class="first hide" id="login">
   <span class="mark" id="lgMark" aria-hidden="true"></span>
-  <h1>เข้าสู่ระบบ</h1>
-  <p>ข้อมูลอยู่บนบัญชีของคุณ เปิดเครื่องไหนก็เห็นเหมือนกัน</p>
+  <h1 class="lgbrand">Muifei</h1>
+  <p class="lgtag">บัญชีรับ-จ่ายในบ้าน พิมพ์สั้นๆ หรือพูดใส่ก็ได้
+     แอปเดาหมวดให้เอง แล้วบอกว่าวันนี้เหลือเท่าไหร่</p>
   <div class="lgf"><input type="email" id="lgEm" placeholder="อีเมล" autocomplete="username" inputmode="email"></div>
   <div class="lgf"><input type="password" id="lgPw" placeholder="รหัสผ่าน" autocomplete="current-password"></div>
   <div class="lgmsg" id="lgMsg"></div>
   <button class="btn btn-main" id="lgBtn" onclick="doLogin()">เข้าสู่ระบบ</button>
-  <button class="btn lgdemo" onclick="demoStart()">ดูตัวอย่าง ไม่ต้องเข้าสู่ระบบ</button>
+  <div class="lgor"><span>หรือ</span></div>
+  <button class="btn lgdemo" onclick="demoStart()">ลองดูด้วยข้อมูลตัวอย่าง</button>
   <p class="lgnote">ยังไม่มีระบบรีเซ็ตรหัสผ่าน เก็บรหัสไว้ให้ดี</p>
 </div>
 
@@ -2364,16 +2402,20 @@ function demoExit(){
     LS.removeItem('fam_demo'); location.reload();
   });
 }
-function acctLine(){
-  var e=document.getElementById('acctLine'); if(!e)return;
-  if(DEMO){ e.className='acctline demo'; e.textContent='โหมดทดลอง · ข้อมูลทั้งหมดเป็นตัวอย่าง ไม่ได้เก็บขึ้นเซิร์ฟเวอร์'; return; }
-  if(_sbUid&&!_sbSynced){
-    e.className='acctline demo';
-    e.textContent='ต่อเซิร์ฟเวอร์ไม่ได้ · ที่แก้ตอนนี้จะยังไม่ถูกบันทึก ลองเปิดแอปใหม่';
-    return;
-  }
-  e.className='acctline';
-  e.innerHTML=_sbMail?('เข้าใช้ด้วย <b>'+esc(shortMail(_sbMail))+'</b>'):'';
+function acctLine(){ renderBk(); }
+/* Ver.53: เวลาที่ลงรายการ — ไม่ต้องเพิ่มคอลัมน์ในฐานข้อมูล
+   uid() = Date.now().toString(36) + สุ่ม 4 ตัว — เวลาสร้างฝังอยู่ใน id ทุกแถวอยู่แล้ว
+   รวมถึง 99 แถวเก่า จึงย้อนหลังได้โดยไม่ต้องแก้ schema บน Supabase เลย
+   โชว์เฉพาะเมื่อวันที่สร้างตรงกับวันของรายการ (รายการย้อนหลังจะไม่มีเวลา) */
+function entryTime(e){
+  if(!e||!e.id||!e.date)return '';
+  var m=String(e.id).match(/^([0-9a-z]{7,9})[0-9a-z]{4}$/);
+  if(!m)return '';
+  var t=parseInt(m[1],36);
+  if(!(t>1400000000000&&t<2200000000000))return '';
+  var d=new Date(t);
+  if(dkey(d)!==e.date)return '';
+  return ('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2);
 }
 function shortMail(m){
   var a=String(m).split('@'); if(a.length<2)return m;
@@ -2726,32 +2768,38 @@ function streakDays(){
 
 /* ================= กราฟ ================= */
 var chRange='day7',chShow='both',chSel=-1;   /* Ver.15: 7 วัน ไม่ใช่ 14 — คอลัมน์กว้างขึ้นเท่าตัว ตัวเลขบนหัวแท่งจึงวางแนวนอนได้ */
+function chAdd(dst,src){ for(var k in src)dst[k]=(dst[k]||0)+src[k]; return dst; }
 function buildChart(){
   var out=[],n,i,d,k,g={};
   D.entries.forEach(function(e){
-    if(!g[e.date])g[e.date]={'in':0,out:0};
-    g[e.date][e.type]+=e.amount;});
+    if(!g[e.date])g[e.date]={'in':0,out:0,ci:{},co:{}};
+    g[e.date][e.type]+=e.amount;
+    var m=e.type==='in'?g[e.date].ci:g[e.date].co;
+    var c=e.cat||'อื่นๆ'; m[c]=(m[c]||0)+e.amount;});
   if(chRange==='day7'){
     n=30;   /* Ver.34: เก็บ 30 วัน แต่จอเห็นทีละ 7 แล้วเลื่อนเอา */
     for(i=n-1;i>=0;i--){d=new Date();d.setDate(d.getDate()-i);k=dkey(d);
       out.push({lab:d.getDate()+'',full:thDate(k),sh:d.getDate()+' '+MTHS[d.getMonth()],
-                'in':(g[k]?g[k]['in']:0),out:(g[k]?g[k].out:0)});}
+                'in':(g[k]?g[k]['in']:0),out:(g[k]?g[k].out:0),
+                ci:(g[k]?g[k].ci:{}),co:(g[k]?g[k].co:{})});}
   }else if(chRange==='wk8'){
     n=26;   /* Ver.36: เก็บครึ่งปี จอเห็นทีละ 6 สัปดาห์ แล้วเลื่อนย้อนเอา */
     for(i=n-1;i>=0;i--){
       var ws=weekStart(new Date());ws.setDate(ws.getDate()-i*7);
       var we=new Date(ws);we.setDate(we.getDate()+6);
-      var si=0,so=0;
-      for(var x=new Date(ws);x<=we;x.setDate(x.getDate()+1)){var kk=dkey(x);if(g[kk]){si+=g[kk]['in'];so+=g[kk].out;}}
+      var si=0,so=0,mi={},mo={};
+      for(var x=new Date(ws);x<=we;x.setDate(x.getDate()+1)){var kk=dkey(x);
+        if(g[kk]){si+=g[kk]['in'];so+=g[kk].out;chAdd(mi,g[kk].ci);chAdd(mo,g[kk].co);}}
       out.push({lab:ws.getDate()+'/'+(ws.getMonth()+1),full:'สัปดาห์ '+ws.getDate()+' '+MTHS[ws.getMonth()],
-                sh:ws.getDate()+' '+MTHS[ws.getMonth()],'in':si,out:so});}
+                sh:ws.getDate()+' '+MTHS[ws.getMonth()],'in':si,out:so,ci:mi,co:mo});}
   }else{
     n=12;   /* Ver.36: เก็บ 1 ปี จอเห็นทีละ 6 เดือน แล้วเลื่อนย้อนเอา */
     for(i=n-1;i>=0;i--){
       var dt=new Date();dt.setDate(1);dt.setMonth(dt.getMonth()-i);
-      var ym=dkey(dt).slice(0,7),s=sumMonth(ym);
+      var ym=dkey(dt).slice(0,7),s=sumMonth(ym),mi={},mo={};
+      for(var gk in g)if(gk.slice(0,7)===ym){chAdd(mi,g[gk].ci);chAdd(mo,g[gk].co);}
       out.push({lab:MTHS[dt.getMonth()],full:MTH[dt.getMonth()]+' '+((dt.getFullYear()+543)%100),
-                sh:MTHS[dt.getMonth()]+' '+((dt.getFullYear()+543)%100),'in':s['in'],out:s.out});}
+                sh:MTHS[dt.getMonth()]+' '+((dt.getFullYear()+543)%100),'in':s['in'],out:s.out,ci:mi,co:mo});}
   }
   return out;
 }
@@ -2843,8 +2891,10 @@ function renderChart(){
     else{nIn=d['in']?fmtK(d['in']):'';nOut=d.out?fmtK(d.out):'';}
     h+='<div class="bcol'+(chSel===i?' sel':'')+'" onclick="pickBar('+i+')">'
      +'<div class="bpair'+(chShow==='both'?'':' one')+'">';
-    if(chShow!=='out')h+='<div class="bar i'+(d['in']?'':' z')+(ci?' clip':'')+(chShow==='both'?' bmark':'')+'" data-h="'+bi+'"'+sty(bi)+'><span class="bnum i">'+nIn+'</span></div>';
-    if(chShow!=='in')h+='<div class="bar o'+(d.out?'':' z')+(co?' clip':'')+'" data-h="'+bo+'"'+sty(bo)+'><span class="bnum o">'+nOut+'</span></div>';
+    if(chShow!=='out')h+='<div class="bar i'+(d['in']?'':' z')+(ci?' clip':'')+(chShow==='both'?' bmark':'')+(chShow==='in'&&d['in']?' split':'')+'" data-h="'+bi+'"'+sty(bi)+'>'
+      +(chShow==='in'?chSegs(d.ci,'in'):'')+'<span class="bnum i">'+nIn+'</span></div>';
+    if(chShow!=='in')h+='<div class="bar o'+(d.out?'':' z')+(co?' clip':'')+(chShow==='out'&&d.out?' split':'')+'" data-h="'+bo+'"'+sty(bo)+'>'
+      +(chShow==='out'?chSegs(d.co,'out'):'')+'<span class="bnum o">'+nOut+'</span></div>';
     h+='</div><div class="blab">'+esc(d.lab)+'</div></div>';});
   var bx=document.getElementById('bars'),keepLeft=bx.scrollLeft;bx.innerHTML=h;
   /* Ver.16: 8 คอลัมน์ขึ้นไป (รายสัปดาห์) ช่องแคบลงเหลือ ~37px การสแปลย์ป้ายออกด้านข้าง
@@ -2881,6 +2931,17 @@ function renderChart(){
     bx.scrollLeft=structural?bx.scrollWidth:keepLeft;
     chSubSync();});
   drawReadout();
+}
+/* Ver.53: ดูฝั่งเดียว = สีเดียวทั้งแท่งไม่ได้บอกอะไร — ซอยตามหมวดด้วยสีชุดเดียวกับโดนัท
+   ใช้ flex-grow ตามยอด จึงไม่ต้องคำนวณเปอร์เซ็นต์เอง และความสูงรวมของแท่งยังคุมโดย style เดิม */
+function chSegs(map,type){
+  if(!map)return '';
+  var ks=Object.keys(map).filter(function(k){return map[k]>0;});
+  if(ks.length<2)return '';
+  ks.sort(function(a,b){return map[b]-map[a];});
+  return ks.map(function(k){
+    return '<i class="bseg" style="flex:'+map[k].toFixed(2)+';background:'+catSoft(catColor(k,type))+'"></i>';
+  }).join('');
 }
 var _chSig='',_chCapNote='';
 /* Ver.15: ป้ายสองใบในคอลัมน์เดียวกันจะทับกันเฉพาะตอนแท่งสูงพอๆ กัน
@@ -2950,6 +3011,17 @@ function deColide(bx){
 function drawReadout(){
   var el=document.getElementById('readout'),d=chSel>=0?window._chData[chSel]:null;
   if(!d){
+    if(chShow!=='both'){
+      var tot={},dd=window._chData||[],kk=chShow==='in'?'ci':'co';
+      dd.forEach(function(x){ chAdd(tot,x[kk]||{}); });
+      var ks=Object.keys(tot).filter(function(k){return tot[k]>0;})
+        .sort(function(a,b){return tot[b]-tot[a];}).slice(0,3);
+      if(ks.length>1){
+        el.innerHTML='<div class="legend cats">'+ks.map(function(k){
+          return '<span><i style="background:'+catSoft(catColor(k,chShow))+'"></i>'+esc(k)+'</span>';}).join('')
+         +'</div>';return;
+      }
+    }
     el.innerHTML='<div class="legend"><span><i style="background:var(--out)"></i>จ่าย</span>'
      +'<span><i style="background:var(--in)"></i>รับ</span>'
      +'<span style="color:var(--ink3)">'+'แตะแท่งเพื่อดูตัวเลข'+'</span></div>';return;}
@@ -3069,51 +3141,68 @@ function renderTrend(){
 function thShort(k){var dt=parseKey(k);return dt.getDate()+' '+MTHS[dt.getMonth()];}
 
 /* ================= สรุปเดือน ================= */
+var sumSide='out',sumPeriod='cur';
+function sumMonths(){
+  var m={},i;
+  for(i=0;i<D.entries.length;i++)m[monthOf(D.entries[i].date)]=1;
+  var ks=Object.keys(m).sort().reverse().slice(0,12);
+  var cur=monthOf(today());
+  if(ks.indexOf(cur)<0)ks.unshift(cur);
+  return ks;
+}
+function sumPeriodLabel(p){
+  if(p==='all')return 'ตั้งแต่เก็บมา';
+  var ym=(p==='cur')?monthOf(today()):p;
+  return MTH[+ym.slice(5,7)-1]+' '+((+ym.slice(0,4)+543)%100);
+}
+function setSumSide(v){sumSide=v;_fxDonut=true;renderSummary();buzz(8);}
+function setSumPeriod(v){sumPeriod=v;_fxDonut=true;renderSummary();buzz(8);}
 function renderSummary(){
-  var ym=monthOf(today()),by={},tot=0;
+  var side=sumSide,per=sumPeriod,ym=(per==='cur')?monthOf(today()):per;
+  var by={},tot=0;
   D.entries.forEach(function(e){
-    if(monthOf(e.date)!==ym||e.type!=='out')return;
+    if(e.type!==side)return;
+    if(per!=='all'&&monthOf(e.date)!==ym)return;
     by[e.cat]=(by[e.cat]||0)+e.amount;tot+=e.amount;});
   var ks=Object.keys(by).sort(function(a,b){return by[b]-by[a];});
-  document.getElementById('sumSub').textContent=MTH[+ym.slice(5,7)-1];
-  if(!ks.length){document.getElementById('sumBody').innerHTML='<div class="empty" style="padding:8px 4px">เดือนนี้ยังไม่มีรายจ่าย</div>';return;}
+  var popts=[['cur','เดือนนี้']];
+  sumMonths().forEach(function(m){ if(m!==monthOf(today()))popts.push([m,sumPeriodLabel(m)]); });
+  popts.push(['all','ตั้งแต่เก็บมา']);
+  document.getElementById('sumSel').innerHTML=
+    mselHtml('sside',side,[['out','เฉพาะจ่าย'],['in','เฉพาะรับ']],'setSumSide')
+   +mselHtml('sper',per,popts,'setSumPeriod');
+  document.getElementById('sumTitle').textContent=side==='out'?'จ่ายไปกับอะไร':'รับมาจากอะไร';
+  document.getElementById('sumSub').textContent=sumPeriodLabel(per);
+  if(!ks.length){document.getElementById('sumBody').innerHTML='<div class="empty" style="padding:8px 4px">'
+    +(per==='all'?'ยังไม่มีข้อมูล':'ช่วงนี้ยังไม่มีราย'+(side==='out'?'จ่าย':'รับ'))+'</div>';return;}
   var C=2*Math.PI*38,off=0,segs='',_dsi=0;
   ks.forEach(function(k){
     var frac=by[k]/tot,len=Math.max(0,C*frac-Math.min(4,C*.012));
-    /* Ver.27: เส้นโค้งโตออกมาเองด้วยการขยับ stroke-dasharray จาก "0" ไปเป็นความยาวจริง
-       dashoffset เป็นค่าคงที่ ทำหน้าที่แค่บอกว่าหมวดนี้เริ่มตรงไหนของวง
-       (ถ้าไปขยับ dashoffset วงจะหมุน ไม่ใช่โต) */
-    segs+='<circle class="dseg" cx="55" cy="55" r="37" fill="none" stroke="'+catSoft(catColor(k,'out'))+'" stroke-width="14" '
+    segs+='<circle class="dseg" cx="55" cy="55" r="37" fill="none" stroke="'+catSoft(catColor(k,side))+'" stroke-width="14" '
       +'data-da="'+len+' '+(C-len)+'" stroke-dasharray="'+(_fxDonut?('0 '+C):(len+' '+(C-len)))+'" '
       +'style="transition-delay:'+(_fxDonut?_dsi*90:0)+'ms" stroke-dashoffset="'+(-off)+'"></circle>';
     _dsi++;
     off+=C*frac;});
   var rows=ks.slice(0,5).map(function(k){
-    /* Ver.17: เดิมยอดกับเปอร์เซ็นต์อยู่ในสแปนเดียว ความยาวเลขต่างกันขอบขวาจึงไม่ตรงกันสักแถว
-       แยกเป็นสองคอลัมน์กว้างคงที่ ชิดขวาทั้งคู่ ขอบขวาจึงตรงกันแน่นอนไม่ว่าเลขจะกี่หลัก */
-    return '<div class="crow">'+catDotN(k,'out')
+    return '<div class="crow">'+catDotN(k,side)
      +'<span class="cnm">'+esc(k)+'</span><span class="cam">'+fmt(by[k])+'</span>'
      +'<span class="cpc">'+Math.round(by[k]/tot*100)+'%</span></div>';}).join('');
   document.getElementById('sumBody').innerHTML=
-   /* Ver.10: ตัดประโยค "จ่ายมากที่สุดคือ..." ออก — ตัวเลขและอันดับอยู่ในโดนัท
-      กับรายการข้างล่างอยู่แล้ว และยอดรวมก็อยู่กลางโดนัท */
    '<div class="donutwrap"><div class="donut"><svg width="110" height="110">'
    +'<circle cx="55" cy="55" r="37" fill="none" stroke="var(--line)" stroke-width="14"></circle>'+segs+'</svg>'
-   +'<div class="mid"><div class="m1">จ่ายรวม</div><div class="m2">'+fmtK(tot)+'</div></div></div>'
+   +'<div class="mid"><div class="m1">'+(side==='out'?'จ่ายรวม':'รับรวม')+'</div><div class="m2">'+fmtK(tot)+'</div></div></div>'
    +'<div class="catlist">'+rows+'</div></div>'
-   /* Ver.21: แถวรวมล่างสุด — เลขกลางโดนัทเป็นแบบย่อ (4.7k) และรายการข้างๆ โชว์แค่ 5 หมวดแรก
-      ถ้าจ่ายกระจายหลายหมวด ยอดที่เห็นในลิสต์จะบวกกันไม่ครบ แถวนี้จึงเป็นตัวเลขเต็มของทั้งเดือน */
    +'<div class="sumfoot"><span class="sfk">รวมทั้งหมด'
    +(ks.length>5?' <i>('+ks.length+' หมวด)</i>':'')+'</span>'
    +'<span class="sfv">'+fmt(tot)+'</span></div>';
   if(_fxDonut){
     _fxDonut=false;
-    var dn=document.querySelector('.donut');   /* Ver.33 ข้อ 8 */
+    var dn=document.querySelector('.donut');
     if(dn){dn.classList.remove('spin');void dn.offsetWidth;dn.classList.add('spin');
       setTimeout(function(){dn.classList.remove('spin');},900);}
-    var dn=document.getElementById('sumBody');
+    var db=document.getElementById('sumBody');
     requestAnimationFrame(function(){requestAnimationFrame(function(){
-      dn.querySelectorAll('.dseg').forEach(function(c){
+      db.querySelectorAll('.dseg').forEach(function(c){
         c.setAttribute('stroke-dasharray',c.getAttribute('data-da'));});});});
   }
 }
@@ -3788,10 +3877,11 @@ function dayHtml(list,showTot,oneNum){
     var net=din-dout;
     h+='<div class="daygrp" data-fsl="'+esc(fsLab(k))+'"><div class="dayhd"><span>'+esc(thDate(k))+'</span></div>';
     rows.forEach(function(e){
-      var col=catColor(e.cat,e.type);
+      var col=catColor(e.cat,e.type),_etm=entryTime(e);
       h+='<button class="line" data-id="'+esc(e.id)+'">'
        +'<span class="ico" style="'+catStyle(col)+'">'+esc((e.cat||'?').trim().charAt(0))+'</span>'
-       +'<span class="nm"><span class="t1">'+hlq(esc(e.name))+'</span><span class="t2">'+hlq(esc(e.cat))+'</span></span>'
+       +'<span class="nm"><span class="t1">'+hlq(esc(e.name))+'</span><span class="t2">'+hlq(esc(e.cat))
+       +(_etm?'<i class="tstamp">'+_etm+'</i>':'')+'</span></span>'
        +'<span class="amt '+(e.type==='in'?'i':'o')+'">'+(e.type==='in'?'+':'−')+fmt(e.amount)+'</span></button>';});
     /* Ver.31: กรองหมวด หรือ กรองเฉพาะรับ/จ่าย อยู่ = ในวันนั้นมีชนิดเดียวอยู่แล้ว
        รับ·จ่าย·สุทธิ สามช่องจึงเป็นการพูดสิ่งเดียวกันสามรอบ เหลือยอดรวมของวันตัวเดียวพอ
@@ -3947,12 +4037,22 @@ _fsBind();
 window.addEventListener('scroll',function(){_scrollBtns();_fsSync(true);},{passive:true});
 window.addEventListener('resize',function(){_scrollBtns();_fsSync(false);});
 
+/* Ver.53: ชิปมุมขวาบนเปลี่ยนจาก "สำรองข้อมูล" มาเป็นคนที่ใช้งานอยู่
+   [stated] "เราไม่สำรองแล้ว ไม่ต้องคอยเตือน" — ปุ่มสำรองยังอยู่ในหน้าตั้งค่าตามเดิม */
 function renderBk(){
-  var c=document.getElementById('bkChip');
-  if(!D.backupAt){c.textContent='ยังไม่เคยสำรอง';c.classList.add('old');return;}
-  var d=Math.floor((Date.now()-D.backupAt)/86400000);
-  c.textContent=d<=0?'สำรองแล้ววันนี้':'สำรอง '+d+' วันก่อน';
-  c.classList.toggle('old',d>7);
+  var c=document.getElementById('whoChip');if(!c)return;
+  var av=document.getElementById('whoAv'),nm=document.getElementById('whoNm');
+  c.classList.remove('demo','warn');
+  if(DEMO){ c.classList.add('demo'); av.textContent='ท'; nm.textContent='โหมดทดลอง'; return; }
+  if(_sbUid&&!_sbSynced){ c.classList.add('warn'); av.textContent='!'; nm.textContent='ยังไม่ซิงก์'; return; }
+  var u=(_sbMail||'').split('@')[0]||'—';
+  av.textContent=u.charAt(0)||'M'; nm.textContent=u;
+}
+function whoTap(){
+  buzz(8);
+  if(DEMO)return demoExit();
+  if(_sbUid&&!_sbSynced)return toast('ต่อเซิร์ฟเวอร์ไม่ได้ ที่แก้ตอนนี้จะยังไม่ถูกส่งขึ้น ลองเปิดแอปใหม่','del');
+  toast(_sbMail||'—','info');
 }
 
 /* ================= แตะ 2 ครั้งเพื่อเปิดรายการ ================= */
@@ -4845,7 +4945,7 @@ function renderSet(){
       DEMO?'ล้างข้อมูลตัวอย่างทิ้ง กลับไปจอเข้าสู่ระบบ':(_sbErr?'ซิงก์ล่าสุดไม่สำเร็จ':shortMail(_sbMail)),
       '','sbLogout()','<span class="sgo">›</span>')
    +'</div></div>';
-  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.52 · '+(DEMO?'โหมดทดลอง':'ข้อมูลเก็บบนบัญชีของคุณ')+'</div>';
+  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.53 · '+(DEMO?'โหมดทดลอง':'ข้อมูลเก็บบนบัญชีของคุณ')+'</div>';
   document.getElementById('setBody').innerHTML=h;
 }
 function toggleAdv(){advOpen=!advOpen;buzz(8);renderSet();}
