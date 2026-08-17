@@ -2219,6 +2219,7 @@ function save(){_sugCache=null;try{LS.setItem(KEY,JSON.stringify(D));}catch(e){t
 var SB_URL='https://yffuzlmmddyaqenkujwk.supabase.co';
 var SB_KEY='sb_publishable_R2HAmFvoFoQd5NKZjLwzvQ_PLoSETVL';
 var DEMO=false,_sbSynced=false;
+var SYNCK='fam_synced';
 var SB=null,_sbUid='',_sbMail='',_sbIds={},_sbT=null,_sbBusy=false,_sbAgain=false;
 function sbReady(){
   if(SB)return SB;
@@ -2226,6 +2227,11 @@ function sbReady(){
   SB=window.supabase.createClient(SB_URL,SB_KEY);
   return SB;
 }
+function sbSeen(){
+  try{ var a=JSON.parse(LS.getItem(SYNCK)||'[]'); var o={},i;
+       for(i=0;i<a.length;i++)o[a[i]]=1; return o; }catch(e){ return {}; }
+}
+function sbSeenSave(o){ try{ LS.setItem(SYNCK,JSON.stringify(Object.keys(o))); }catch(e){} }
 function sbQueue(){ if(!_sbUid||!_sbSynced)return; clearTimeout(_sbT); _sbT=setTimeout(sbPush,800); }
 function sbRow(e){
   return {id:e.id,name:e.name||'',amount:Number(e.amount)||0,
@@ -2261,7 +2267,7 @@ function sbPush(){
     return sb.from('settings').upsert({user_id:_sbUid,data:st,updated_at:new Date().toISOString()})
       .then(function(r){ if(r.error)throw r.error; });
   }).then(function(){
-    _sbIds=now; _sbErr='';
+    _sbIds=now; _sbErr=''; sbSeenSave(now);
   })['catch'](function(err){
     _sbErr=(err&&err.message)||String(err);
     toast('ซิงก์ขึ้นเซิร์ฟเวอร์ไม่สำเร็จ ของยังอยู่ในเครื่อง','del');
@@ -2292,9 +2298,25 @@ function sbPull(){
                 type:x.type,cat:x.cat||'',date:x.date};
       });
       _sbIds={}; d.entries.forEach(function(x){_sbIds[x.id]=1;});
+      /* Ver.52 — อะไรที่พิมพ์ไว้ในเครื่องแต่ยังไม่เคยขึ้นเซิร์ฟเวอร์ ห้ามทิ้ง
+         ของที่ "เคยอยู่บนเซิร์ฟเวอร์แล้วหายไป" = ถูกลบจากเครื่องอื่น จึงตามลบ */
+      var seen=sbSeen(),keep=[],loc={entries:[]};
+      try{ loc=JSON.parse(LS.getItem(KEY)||'{}')||{}; }catch(e){ loc={}; }
+      (loc.entries||[]).forEach(function(x){
+        if(!x||!x.id||!x.date)return;
+        if(_sbIds[x.id])return;
+        if(seen[x.id])return;
+        keep.push(x);
+      });
+      if(keep.length)d.entries=d.entries.concat(keep);
       _sbSynced=true;
       LS.setItem(KEY,JSON.stringify(d));
       D=load();
+      sbSeenSave(_sbIds);
+      if(keep.length){
+        toast('มี '+keep.length+' รายการที่ยังไม่ได้ขึ้นเซิร์ฟเวอร์ กำลังส่งขึ้นให้','info');
+        sbQueue();
+      }
     });
   });
 }
@@ -4823,7 +4845,7 @@ function renderSet(){
       DEMO?'ล้างข้อมูลตัวอย่างทิ้ง กลับไปจอเข้าสู่ระบบ':(_sbErr?'ซิงก์ล่าสุดไม่สำเร็จ':shortMail(_sbMail)),
       '','sbLogout()','<span class="sgo">›</span>')
    +'</div></div>';
-  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.51 · '+(DEMO?'โหมดทดลอง':'ข้อมูลเก็บบนบัญชีของคุณ')+'</div>';
+  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.52 · '+(DEMO?'โหมดทดลอง':'ข้อมูลเก็บบนบัญชีของคุณ')+'</div>';
   document.getElementById('setBody').innerHTML=h;
 }
 function toggleAdv(){advOpen=!advOpen;buzz(8);renderSet();}
