@@ -2051,6 +2051,13 @@ body.dark mark{background:rgba(90,175,240,.26)}
   mask-composite:exclude;pointer-events:none}
 .who.demo .wav:after,.who.warn .wav:after{background:none;box-shadow:0 0 0 2px var(--out) inset}
 </style>
+<style id="skin51">
+/* Ver.64 — [stated] "เอารูปนี้เลย ไม่ต้องวาดใหม่" — มาสคอตเป็นไฟล์ภาพ mascot.png
+   ไม่ฝัง base64 เพราะ index.html จะโตขึ้น 400KB ทันที และ sw แคชไฟล์นี้ให้อยู่แล้ว */
+.mark{background:#A8B48F}
+.mkimg{width:100%;height:100%;object-fit:cover;display:block;border-radius:inherit;
+  -webkit-user-select:none;user-select:none;pointer-events:none}
+</style>
 <style id="skin49">
 /* Ver.58 */
 /* [1] ปุ่มตาไปมุมขวาบนของการ์ดยอดเงิน ไม่เกาะข้างตัวเลขแล้ว */
@@ -2110,7 +2117,7 @@ body.dark mark{background:rgba(90,175,240,.26)}
 
 <header class="top">
   <div class="trow">
-    <span class="mark" aria-hidden="true"><svg class="mkicon" viewBox="0 0 40 40" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round"><path d="M3.6 40c.6-6.4 4.6-10.4 9.4-11.4"/><path d="M36.6 40c-.6-6.4-4.6-10.4-9.4-11.4"/><path d="M9.6 32.4 12.6 40M30.6 32.4 27.6 40"/><path d="M13.9 8.9 10 9.1 6.9 12.6l.7 4 3.3 1-1-4.4Z"/><path d="M26.3 8.9l3.9.2 3.1 3.5-.7 4-3.3 1 1-4.4Z"/><path d="M20.1 8.6c6.2 0 11.2 5.6 11.2 12.4S26.3 33.4 20.1 33.4 8.9 27.8 8.9 21 13.9 8.6 20.1 8.6Z"/><path d="M13.2 13.4 16.4 14.8M27 13.4 23.8 14.8"/><path stroke-width=".8" d="M22.6 10 24.3 13.6M21.9 10.9l1.7-.7M22.5 12.2l1.7-.7M23.1 13.5l1.7-.7"/><path d="M10.2 15.8h8.8v2.9c0 1.5-1.2 2.6-2.8 2.6h-3.4c-1.6 0-2.6-1.1-2.6-2.6Z"/><path d="M21.2 15.8h8.8v2.9c0 1.5-1 2.6-2.6 2.6h-3.4c-1.6 0-2.8-1.1-2.8-2.6Z"/><path d="M19 16.5h2.2"/><path d="M26.6 25.2c.5 3.2-1.4 6-4 6.8"/><path class="mksn" fill="currentColor" d="M19.9 18.2c2.7 0 4.4 1.4 4.4 3.2s-1.7 3.3-4.4 3.3-4.4-1.5-4.4-3.3 1.7-3.2 4.4-3.2Z"/><ellipse cx="18.3" cy="21" rx=".7" ry="1.6"/><ellipse cx="21.3" cy="21" rx=".7" ry="1.6"/><rect class="mksn" fill="currentColor" x="0" y="-1.25" width="10.6" height="2.5" rx="1" transform="translate(11.2 29.2) rotate(-28.8)"/><circle class="mksn" fill="currentColor" cx="11.9" cy="28.9" r="1.35"/><circle cx="11.9" cy="28.9" r=".45"/></g></svg></span>
+    <span class="mark" aria-hidden="true"><img class="mkimg" src="./mascot.png" alt="" draggable="false"></span>
     <span class="brand"><b>Muifei</b><i class="today" id="todayLbl">บัญชีรับ-จ่ายในบ้าน</i></span>
     <button class="who tap" id="whoChip" onclick="whoTap()" aria-label="บัญชี"><span class="wav" id="whoAv">M</span><span class="wnm" id="whoNm"></span></button>
   </div>
@@ -2245,7 +2252,7 @@ body.dark mark{background:rgba(90,175,240,.26)}
 </div>
 
 <div class="first hide" id="first">
-  <span class="mark" aria-hidden="true"><svg class="mkicon" viewBox="0 0 40 40" fill="none" aria-hidden="true"><g stroke="currentColor" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round"><path d="M3.6 40c.6-6.4 4.6-10.4 9.4-11.4"/><path d="M36.6 40c-.6-6.4-4.6-10.4-9.4-11.4"/><path d="M9.6 32.4 12.6 40M30.6 32.4 27.6 40"/><path d="M13.9 8.9 10 9.1 6.9 12.6l.7 4 3.3 1-1-4.4Z"/><path d="M26.3 8.9l3.9.2 3.1 3.5-.7 4-3.3 1 1-4.4Z"/><path d="M20.1 8.6c6.2 0 11.2 5.6 11.2 12.4S26.3 33.4 20.1 33.4 8.9 27.8 8.9 21 13.9 8.6 20.1 8.6Z"/><path d="M13.2 13.4 16.4 14.8M27 13.4 23.8 14.8"/><path stroke-width=".8" d="M22.6 10 24.3 13.6M21.9 10.9l1.7-.7M22.5 12.2l1.7-.7M23.1 13.5l1.7-.7"/><path d="M10.2 15.8h8.8v2.9c0 1.5-1.2 2.6-2.8 2.6h-3.4c-1.6 0-2.6-1.1-2.6-2.6Z"/><path d="M21.2 15.8h8.8v2.9c0 1.5-1 2.6-2.6 2.6h-3.4c-1.6 0-2.8-1.1-2.8-2.6Z"/><path d="M19 16.5h2.2"/><path d="M26.6 25.2c.5 3.2-1.4 6-4 6.8"/><path class="mksn" fill="currentColor" d="M19.9 18.2c2.7 0 4.4 1.4 4.4 3.2s-1.7 3.3-4.4 3.3-4.4-1.5-4.4-3.3 1.7-3.2 4.4-3.2Z"/><ellipse cx="18.3" cy="21" rx=".7" ry="1.6"/><ellipse cx="21.3" cy="21" rx=".7" ry="1.6"/><rect class="mksn" fill="currentColor" x="0" y="-1.25" width="10.6" height="2.5" rx="1" transform="translate(11.2 29.2) rotate(-28.8)"/><circle class="mksn" fill="currentColor" cx="11.9" cy="28.9" r="1.35"/><circle cx="11.9" cy="28.9" r=".45"/></g></svg></span>
+  <span class="mark" aria-hidden="true"><img class="mkimg" src="./mascot.png" alt="" draggable="false"></span>
   <h1>ตอนนี้มีเงินอยู่เท่าไหร่</h1>
   <p>ใส่ครั้งเดียว แล้ว Muifei จะบวกลบให้เองจากที่จดต่อจากนี้</p>
   <div class="money filled"><span class="cur">฿</span>
@@ -4376,7 +4383,7 @@ function drawAccount(){
    +stat
    +'<div class="acrow"><span class="ack">รายการทั้งหมด</span><span class="acv">'+fmt(nEnt)+' รายการ</span></div>'
    +(first?'<div class="acrow"><span class="ack">จดมาตั้งแต่</span><span class="acv">'+esc(first)+'</span></div>':'')
-   +'<div class="acrow"><span class="ack">เวอร์ชัน</span><span class="acv">Muifei Ver.63</span></div>'
+   +'<div class="acrow"><span class="ack">เวอร์ชัน</span><span class="acv">Muifei Ver.64</span></div>'
    +'<div style="height:14px"></div>'
    +(DEMO?'':'<button class="btn btn-out" onclick="sheetPush(drawBackup)">สำรองข้อมูล และไฟล์ตาราง</button>')
    +'<div style="height:8px"></div>'
@@ -5277,7 +5284,7 @@ function renderSet(){
       DEMO?'ล้างข้อมูลตัวอย่างทิ้ง กลับไปจอเข้าสู่ระบบ':(_sbErr?'ซิงก์ล่าสุดไม่สำเร็จ':shortMail(_sbMail)),
       '','sbLogout()','<span class="sgo">›</span>')
    +'</div></div>';
-  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.63 · '+(DEMO?'โหมดทดลอง':'ข้อมูลเก็บบนบัญชีของคุณ')+'</div>';
+  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.64 · '+(DEMO?'โหมดทดลอง':'ข้อมูลเก็บบนบัญชีของคุณ')+'</div>';
   document.getElementById('setBody').innerHTML=h;
 }
 function toggleAdv(){advOpen=!advOpen;buzz(8);renderSet();}
@@ -5316,7 +5323,7 @@ function drawPinList(){
   curSheet='pins';
   var rows=D.pins.length?D.pins.map(function(p,i){
     return '<button class="setrow" onclick="editPin('+i+')">'
-     +catDotN(p.cat,p.type||'out','lg')
+     +catIcoTile(p.cat,p.type||'out','lg')
      +'<span class="cn">'+esc(p.n)+'<span style="color:var(--ink3);font-size:11.5px"> · '+esc(p.cat)+'</span></span>'
      +'<span class="go">›</span></button>';}).join('')
    :'<div class="hintline">ยังไม่มีชิป ชิปคือของที่ซื้อบ่อย กดแล้วชื่อกับหมวดมาเอง เหลือแค่ใส่ราคา</div>';
