@@ -2196,6 +2196,20 @@ body.dark .ptr{background:var(--card2)}
 .ptr.spin svg{animation:ptrspin .9s linear infinite}
 @media (prefers-reduced-motion: reduce){ .ptr.spin svg{animation:none} }
 </style>
+<style id="skin56">
+/* Ver.71 — [stated] "ทำแบบที่ผมขีดให้ดู โค้งแบบนี้" (ขีดเส้นโค้งทับขอบซ้ายของการ์ด)
+   แท่งตรงของ Ver.69 กลายเป็นเส้นโค้งที่วิ่งตามขอบมนของการ์ดจริงๆ
+   ท่าที่ใช้: กล่องซ้อนขนาดเท่าการ์ด ย่อเข้ามา 5px รัศมี 15px (20 ลบระยะที่ย่อ = ยังโค้งร่วมศูนย์กัน)
+   ใส่ border ครบ 4 ด้านแต่ให้โปร่งใส 3 ด้าน เหลือสีเฉพาะด้านซ้าย
+   ต้องมี border บนล่างด้วยแม้จะโปร่ง ไม่งั้นเบราว์เซอร์ไม่วาดส่วนโค้งที่มุมให้เลย
+   ส่วนทึบยังยาวตามสัดส่วนของเดือนเหมือนเดิม แต่คราวนี้ตัดด้วย clip-path แทนความสูง */
+.tile.tabtop::after,.tile.tabtop::before{
+  top:5px;bottom:5px;left:5px;right:5px;width:auto;height:auto;
+  background:none;border:4px solid transparent;border-left-color:var(--tabc,var(--accent));
+  border-radius:15px;pointer-events:none}
+.tile.tabtop::after{opacity:.16}
+.tile.tabtop::before{opacity:1;clip-path:inset(calc(100% * (1 - var(--tabf,1))) 0 0 0)}
+</style>
 <link rel="manifest" href="./manifest.webmanifest">
 <meta name="theme-color" content="#1752B6">
 <meta name="mobile-web-app-capable" content="yes">
