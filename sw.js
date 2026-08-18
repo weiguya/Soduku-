@@ -1,7 +1,8 @@
 /* Muifei service worker — network-first สำหรับ index.html, cache-first สำหรับไอคอน
    ตั้งใจใช้ network-first กับตัวแอป เพราะปัญหาคลาสสิกของ PWA คือ
    อัปไฟล์ใหม่ขึ้น GitHub แล้วเครื่องยังเห็นของเก่าค้างอยู่ */
-var CACHE = 'muifei-v1';
+/* Ver.65: ขึ้นเลขทุกครั้งที่เปลี่ยนไอคอน/มาสคอต — ไม่งั้นของเก่าค้างในแคชตลอดไป */
+var CACHE = 'muifei-v2';
 var SHELL = ['./index.html', './manifest.webmanifest', './mascot.png',
              './icon-192.png', './icon-512.png', './icon-maskable-512.png'];
 
