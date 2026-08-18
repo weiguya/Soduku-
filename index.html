@@ -2021,8 +2021,12 @@ body.dark mark{background:rgba(90,175,240,.26)}
   stroke-linecap:round;stroke-linejoin:round}
 .cico.lg{flex:0 0 30px;width:30px;height:30px;border-radius:9px}
 .cico.lg svg{width:17px;height:17px}
-.chip .cico,.rc .cico{margin-right:6px;flex:0 0 18px;width:18px;height:18px;border-radius:6px}
-.chip .cico svg,.rc .cico svg{width:11.5px;height:11.5px}
+.rc .cico{margin-right:6px;flex:0 0 18px;width:18px;height:18px;border-radius:6px}
+.rc .cico svg{width:11.5px;height:11.5px}
+/* Ver.59: ในชิป ไอคอนต้องแทน "จุดสี" ไม่ใช่แทน "การ์ดไอคอน" — กระเบื้องสีทำให้ชิปยาวผิดรูป
+   เหลือแต่เส้นไอคอนสีหมวด กว้างเท่าจุดเดิม ชิปจึงยาวเท่าเดิม */
+.chip .cico{background:none!important;margin-right:5px;flex:0 0 15px;width:15px;height:15px;border-radius:0}
+.chip .cico svg{width:15px;height:15px;stroke-width:1.9}
 /* ตารางเลือกไอคอนในหน้าแก้หมวด */
 .icgrid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
 .icgrid button{aspect-ratio:1;border-radius:11px;border:1px solid var(--line2);background:var(--card);
@@ -2057,14 +2061,25 @@ body.dark mark{background:rgba(90,175,240,.26)}
 /* [3] สามช่องหรือสองช่อง กว้างเท่ากันเสมอ — ไม่ให้สองช่องยืดเต็มจอ */
 #chSel2 .msel{flex:0 0 calc((100% - 16px)/3)}
 /* [4] เฉลี่ยต่อวันย้ายมาอยู่ใต้ชื่อหมวดในการ์ดโดนัท ตัวเล็กกว่าชื่อหมวด */
-.crow{align-items:flex-start}
+/* Ver.59: แถวโดนัทมีสองบรรทัดแล้ว ไอคอนกับตัวเลขต้องกลางกับ "ทั้งก้อน" ไม่ใช่ชิดบรรทัดบน */
+/* วัดแล้ว: ชื่อหมวดยาวสุดต้องการ 101px แต่ช่องเหลือแค่ 61px จึงโดนตัดทุกแถว
+   คืนที่ให้ชื่อด้วยการย่อโดนัท 110→86 และบีบคอลัมน์ตัวเลขลง — ได้ชื่อ ~99px */
+.donutwrap{gap:10px}
+.donut{flex:0 0 86px}
+.donut svg{width:86px;height:86px}
+.donut .m2{font-size:13.5px}
+.donut .m1{font-size:9.5px}
+.cam{flex:0 0 56px;font-size:12px}
+.cpc{flex:0 0 30px;font-size:11px}
+.crow{align-items:center}
+.crow .cico{flex:0 0 26px;width:26px;height:26px;border-radius:9px}
+.crow .cico svg{width:15px;height:15px}
 .crow .cnm{display:block}
 .crow .cnm{flex:1;min-width:0}
 .crow .cnm b,.crow .cnm i{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .crow .cnm b{font-weight:500;font-size:14px;line-height:1.35}
 .crow .cnm i{font-style:normal;font-size:10.5px;color:var(--ink3);line-height:1.3;
   font-variant-numeric:tabular-nums}
-.crow .cam,.crow .cpc{align-self:center}
 /* [5] การ์ดรับ/จ่ายเดือนนี้กดได้ */
 .tile.tap{cursor:pointer;-webkit-tap-highlight-color:transparent}
 .tile.tap:active{transform:scale(.985)}
@@ -3366,7 +3381,7 @@ function renderSummary(){
      +'<span class="cam">'+fmt(by[k])+'</span>'
      +'<span class="cpc">'+Math.round(by[k]/tot*100)+'%</span></div>';}).join('');
   document.getElementById('sumBody').innerHTML=
-   '<div class="donutwrap"><div class="donut"><svg width="110" height="110">'
+   '<div class="donutwrap"><div class="donut"><svg viewBox="0 0 110 110">'
    +'<circle cx="55" cy="55" r="37" fill="none" stroke="var(--line)" stroke-width="14"></circle>'+segs+'</svg>'
    +'<div class="mid"><div class="m1">'+(side==='out'?'จ่ายรวม':'รับรวม')+'</div><div class="m2">'+fmtK(tot)+'</div></div></div>'
    +'<div class="catlist">'+rows+'</div></div>'
@@ -4286,7 +4301,7 @@ function drawAccount(){
    +stat
    +'<div class="acrow"><span class="ack">รายการทั้งหมด</span><span class="acv">'+fmt(nEnt)+' รายการ</span></div>'
    +(first?'<div class="acrow"><span class="ack">จดมาตั้งแต่</span><span class="acv">'+esc(first)+'</span></div>':'')
-   +'<div class="acrow"><span class="ack">เวอร์ชัน</span><span class="acv">Muifei Ver.58</span></div>'
+   +'<div class="acrow"><span class="ack">เวอร์ชัน</span><span class="acv">Muifei Ver.59</span></div>'
    +'<div style="height:14px"></div>'
    +(DEMO?'':'<button class="btn btn-out" onclick="sheetPush(drawBackup)">สำรองข้อมูล และไฟล์ตาราง</button>')
    +'<div style="height:8px"></div>'
@@ -5187,7 +5202,7 @@ function renderSet(){
       DEMO?'ล้างข้อมูลตัวอย่างทิ้ง กลับไปจอเข้าสู่ระบบ':(_sbErr?'ซิงก์ล่าสุดไม่สำเร็จ':shortMail(_sbMail)),
       '','sbLogout()','<span class="sgo">›</span>')
    +'</div></div>';
-  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.58 · '+(DEMO?'โหมดทดลอง':'ข้อมูลเก็บบนบัญชีของคุณ')+'</div>';
+  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.59 · '+(DEMO?'โหมดทดลอง':'ข้อมูลเก็บบนบัญชีของคุณ')+'</div>';
   document.getElementById('setBody').innerHTML=h;
 }
 function toggleAdv(){advOpen=!advOpen;buzz(8);renderSet();}
