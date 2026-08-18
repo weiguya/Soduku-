@@ -1987,7 +1987,6 @@ body.dark mark{background:rgba(90,175,240,.26)}
 #login .lgtag{font-size:13px;color:var(--ink3);margin:0}
 #login .lgcard{width:100%;max-width:340px;background:var(--card);border:1px solid var(--line);
   border-radius:20px;padding:18px 16px 16px;text-align:left;box-shadow:0 8px 26px -18px rgba(20,23,31,.4)}
-#login .lgl{display:block;font-size:12px;color:var(--ink3);font-weight:500;margin:0 0 5px}
 #login .lgf{margin:0 0 12px}
 #login .lgf input{text-align:left;height:46px;border-radius:13px;background:var(--card2)}
 #login .lgmsg{margin:0 0 6px}
@@ -2007,6 +2006,48 @@ body.dark mark{background:rgba(90,175,240,.26)}
 .acrow .acv.bad{color:var(--out)}
 .btn.dang{color:var(--out);border-color:color-mix(in srgb,var(--out) 32%,transparent)}
 </style>
+<style id="skin48">
+/* Ver.55 */
+/* [1] ดรอปดาวน์ 3 ตัวบนกราฟต้องอยู่บรรทัดเดียวเสมอ — "รายสัปดาห์" ยาวกว่า "รายวัน" จึงเคยตกบรรทัด
+   ให้ทั้งสามช่องแบ่งความกว้างเท่ากันแล้วตัดคำด้วย … แทนการห่อบรรทัด */
+#chSel2{flex-wrap:nowrap}
+#chSel2 .msel{flex:1 1 0;min-width:0}
+#chSel2 .mselb{width:100%;padding-left:11px;padding-right:9px}
+#chSel2 .mselb>span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+/* [2] ไอคอนหมวดขนาดเล็ก ใช้แทนจุดสีในลิสต์/legend/ฟอร์ม */
+.cico{flex:0 0 22px;width:22px;height:22px;border-radius:7px;display:inline-flex;align-items:center;
+  justify-content:center;vertical-align:middle}
+.cico svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:1.8;
+  stroke-linecap:round;stroke-linejoin:round}
+.cico.lg{flex:0 0 30px;width:30px;height:30px;border-radius:9px}
+.cico.lg svg{width:17px;height:17px}
+.chip .cico,.rc .cico{margin-right:6px;flex:0 0 18px;width:18px;height:18px;border-radius:6px}
+.chip .cico svg,.rc .cico svg{width:11.5px;height:11.5px}
+/* ตารางเลือกไอคอนในหน้าแก้หมวด */
+.icgrid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.icgrid button{aspect-ratio:1;border-radius:11px;border:1px solid var(--line2);background:var(--card);
+  display:grid;place-items:center;color:var(--ink2);padding:0}
+.icgrid button svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.7;
+  stroke-linecap:round;stroke-linejoin:round}
+.icgrid button.on{border-color:transparent;box-shadow:0 0 0 2.5px var(--ink)}
+#login .lgl{display:block;font-size:12px;color:var(--ink3);font-weight:500;margin:0 0 5px}
+/* [6] ซ่อนยอดเงิน */
+.balwrap{display:flex;align-items:center;gap:8px}
+.eyebtn{flex:0 0 auto;width:30px;height:30px;border-radius:50%;border:0;background:transparent;
+  display:grid;place-items:center;color:var(--ink3);padding:0}
+.eyebtn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;
+  stroke-linecap:round;stroke-linejoin:round}
+.amt.masked{letter-spacing:.04em;font-size:.72em}
+.hero .foot{font-variant-numeric:tabular-nums}
+/* [7] วงแหวนสีรุ้งรอบอวตาร — ท่าเดียวกับ Onion */
+.who .wav{position:relative}
+.who .wav:after{content:"";position:absolute;inset:-3.5px;border-radius:50%;
+  background:conic-gradient(from 0deg,#FFC48A,#FF8FBF,#B79BFF,#84B0FF,#6FE3CE,#FFC48A);
+  padding:2px;-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  mask-composite:exclude;pointer-events:none}
+.who.demo .wav:after,.who.warn .wav:after{background:none;box-shadow:0 0 0 2px var(--out) inset}
+</style>
 </head>
 <body>
 <div class="wall"><i class="w1"></i><i class="w2"></i><i class="w3"></i></div>
@@ -2024,7 +2065,10 @@ body.dark mark{background:rgba(90,175,240,.26)}
   <div class="bento">
     <section class="hero tile wide">
       <div class="lb">เงินที่มีอยู่ตอนนี้</div>
-      <div class="amt" id="balNum"><span class="bt">฿</span>0</div>
+      <div class="balwrap">
+        <div class="amt" id="balNum"><span class="bt">฿</span>0</div>
+        <button class="eyebtn" id="eyeBtn" onclick="toggleBal()" aria-label="ดูยอดเงิน"></button>
+      </div>
       <div class="foot" id="heroFoot"></div>
     </section>
     <div class="tile tabtop" style="--tabc:var(--in)"><div class="tk">รับเดือนนี้</div><div class="tv i" id="mIn">0</div><div class="tsub" id="mInSub"></div></div>
@@ -2463,10 +2507,24 @@ var CATICO={
   wallet:'<path d="M4 7.5h13a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H4z"/><path d="M4 7.5v-2h11"/><circle cx="16.5" cy="13.5" r="1.1"/>',
   sale:'<path d="M11 4h6.5A2.5 2.5 0 0 1 20 6.5V13l-8 7-8-8z"/><circle cx="15.5" cy="8.5" r="1.2"/>',
   gotin:'<path d="M12 4v11"/><path d="m7.5 10.5 4.5 4.5 4.5-4.5"/><path d="M4.5 19.5h15"/>',
-  other:'<circle cx="6.5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="17.5" cy="12" r="1.5"/>'
+  other:'<circle cx="6.5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="17.5" cy="12" r="1.5"/>',
+  cart:'<path d="M3.5 5h2l2.2 9.5h9.6L19.5 8H7"/><circle cx="9.5" cy="18.5" r="1.3"/><circle cx="16.5" cy="18.5" r="1.3"/>',
+  coffee:'<path d="M5 8h11v5.5a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4z"/><path d="M16 9.5h1.8a2.2 2.2 0 0 1 0 4.4H16"/><path d="M7.5 4.5v1.6M11 4v2M14.5 4.5v1.6"/>',
+  phone:'<rect x="7" y="3.5" width="10" height="17" rx="2.4"/><path d="M11 17.6h2"/>',
+  pet:'<circle cx="8" cy="9" r="1.7"/><circle cx="16" cy="9" r="1.7"/><circle cx="5.6" cy="13.6" r="1.5"/><circle cx="18.4" cy="13.6" r="1.5"/><path d="M12 12.5c2.6 0 4.6 2.2 4.6 4.2 0 1.6-1.4 2.6-3 2.3-1-.2-2.2-.2-3.2 0-1.6.3-3-.7-3-2.3 0-2 2-4.2 4.6-4.2Z"/>',
+  tool:'<path d="M14.5 4.5a4 4 0 0 0 5 5L9.8 19.2a2.4 2.4 0 0 1-3.4-3.4z"/><path d="m5 6.5 2.5-2.5 3 3-2.5 2.5z"/>',
+  sport:'<circle cx="12" cy="12" r="8"/><path d="M12 4c2.4 2.2 2.4 13.8 0 16M4.3 10.5c4 1.6 11.4 1.6 15.4 0"/>',
+  plane:'<path d="M10.5 20.5 12 16l7.5-2.2c.8-.3 1.2-1 1.2-1.7 0-1-.9-1.7-1.9-1.5L12 12l-4.6-4.4-1.9.6 2.9 5-3.4 1L3.4 13l-1.2.4 1.7 3.3L7 18.6z"/>',
+  save:'<path d="M12 3.5v17M8 7.5h6.2a2.6 2.6 0 0 1 0 5.2H9.8a2.6 2.6 0 0 0 0 5.2H16"/>',
+  star:'<path d="m12 4 2.4 5 5.6.8-4 3.9 1 5.5-5-2.6-5 2.6 1-5.5-4-3.9 5.6-.8z"/>'
 };
+/* Ver.55: หมวดหนึ่งเลือกไอคอนเองได้ เก็บไว้ที่ตัวหมวด (c.ic) ซึ่งอยู่ในก้อน settings
+   ไม่ต้องแตะตาราง entries เลย · ไม่ได้เลือก = เดาจากชื่อเหมือนเดิม */
+var ICO_PICK=['food','coffee','cart','home','bill','car','health','edu','gift','debt',
+              'wallet','sale','gotin','phone','pet','tool','sport','plane','save','star','other'];
 function catIcoKey(n,type){
   n=String(n||'');
+  var c=catOf(n,type); if(c&&c.ic&&CATICO[c.ic])return c.ic;
   if(/ไฟ|เน็ต|บิล|โทรศัพท์|ส่วนกลาง|ค่าเช่า|ค่าห้อง/.test(n))return 'bill';
   if(/น้ำมัน|เดินทาง|รถ|แท็กซี่|วิน/.test(n))return 'car';
   if(/อาหาร|กิน|ข้าว|เครื่องดื่ม|กาแฟ|ขนม/.test(n))return 'food';
@@ -2479,6 +2537,10 @@ function catIcoKey(n,type){
   if(/ขาย/.test(n))return 'sale';
   if(/ได้รับ|โอน|คืน/.test(n))return 'gotin';
   return type==='in'?'wallet':'other';
+}
+function catIcoTile(n,type,cls){
+  return '<span class="cico'+(cls?' '+cls:'')+'" style="'+catStyle(catColor(n,type))+'">'
+   +catIco(n,type)+'</span>';
 }
 function catIco(n,type){
   return '<svg viewBox="0 0 24 24" aria-hidden="true">'+(CATICO[catIcoKey(n,type)]||CATICO.other)+'</svg>';
@@ -2987,11 +3049,11 @@ function renderChart(){
     else{nIn=d['in']?fmtK(d['in']):'';nOut=d.out?fmtK(d.out):'';}
     h+='<div class="bcol'+(chSel===i?' sel':'')+'" onclick="pickBar('+i+')">'
      +'<div class="bpair'+(chShow==='both'?'':' one')+'">';
-    var _cst=chCat?(' background:'+catSoft(catColor(chCat,chShow))+';'):'';
+    var _cst='';   /* Ver.55: [stated] "อย่าทำหลายสีในแท่งเดียวกัน ... ทำสีแดง สีเขียวแบบเดิม" */
     if(chShow!=='out')h+='<div class="bar i'+(d['in']?'':' z')+(ci?' clip':'')+(chShow==='both'?' bmark':'')+(chShow==='in'&&d['in']?' split':'')+'" data-h="'+bi+'" style="'+_cst.slice(1)+(structural?'':'height:'+bi+'%')+'">'
-      +(chShow==='in'?chSegs(d.ci,'in'):'')+'<span class="bnum i">'+nIn+'</span></div>';
+      +'<span class="bnum i">'+nIn+'</span></div>';
     if(chShow!=='in')h+='<div class="bar o'+(d.out?'':' z')+(co?' clip':'')+(chShow==='out'&&d.out?' split':'')+'" data-h="'+bo+'" style="'+_cst.slice(1)+(structural?'':'height:'+bo+'%')+'">'
-      +(chShow==='out'?chSegs(d.co,'out'):'')+'<span class="bnum o">'+nOut+'</span></div>';
+      +'<span class="bnum o">'+nOut+'</span></div>';
     h+='</div><div class="blab">'+esc(d.lab)+'</div></div>';});
   var bx=document.getElementById('bars'),keepLeft=bx.scrollLeft;bx.innerHTML=h;
   /* Ver.16: 8 คอลัมน์ขึ้นไป (รายสัปดาห์) ช่องแคบลงเหลือ ~37px การสแปลย์ป้ายออกด้านข้าง
@@ -3108,21 +3170,12 @@ function deColide(bx){
 function drawReadout(){
   var el=document.getElementById('readout'),d=chSel>=0?window._chData[chSel]:null;
   if(!d){
-    if(chShow!=='both'&&chCat){
-      el.innerHTML='<div class="legend cats"><span><i style="background:'+catSoft(catColor(chCat,chShow))+'"></i>'
-       +esc(chCat)+'</span><span style="color:var(--ink3)">แตะแท่งเพื่อดูตัวเลข</span></div>';return;
-    }
-    if(chShow!=='both'){
-      var tot={},dd=window._chData||[],kk=chShow==='in'?'ci':'co';
-      dd.forEach(function(x){ chAdd(tot,x[kk]||{}); });
-      var ks=Object.keys(tot).filter(function(k){return tot[k]>0;})
-        .sort(function(a,b){return tot[b]-tot[a];}).slice(0,3);
-      if(ks.length>1){
-        el.innerHTML='<div class="legend cats">'+ks.map(function(k){
-          return '<span><i style="background:'+catSoft(catColor(k,chShow))+'"></i>'+esc(k)+'</span>';}).join('')
-         +'</div>';return;
-      }
-    }
+    var lg='';
+    if(chShow!=='out')lg+='<span><i style="background:var(--in)"></i>รับ</span>';
+    if(chShow!=='in')lg+='<span><i style="background:var(--out)"></i>จ่าย</span>';
+    lg+='<span style="color:var(--ink3)">'+(chCat?('เฉพาะ '+esc(chCat)):'แตะแท่งเพื่อดูตัวเลข')+'</span>';
+    el.innerHTML='<div class="legend">'+lg+'</div>';return;
+    /* ของเดิมไว้ข้างล่าง ไม่ได้ใช้แล้ว */
     el.innerHTML='<div class="legend"><span><i style="background:var(--out)"></i>จ่าย</span>'
      +'<span><i style="background:var(--in)"></i>รับ</span>'
      +'<span style="color:var(--ink3)">'+'แตะแท่งเพื่อดูตัวเลข'+'</span></div>';return;}
@@ -3286,7 +3339,7 @@ function renderSummary(){
     _dsi++;
     off+=C*frac;});
   var rows=ks.slice(0,5).map(function(k){
-    return '<div class="crow">'+catDotN(k,side)
+    return '<div class="crow">'+catIcoTile(k,side)
      +'<span class="cnm">'+esc(k)+'</span><span class="cam">'+fmt(by[k])+'</span>'
      +'<span class="cpc">'+Math.round(by[k]/tot*100)+'%</span></div>';}).join('');
   document.getElementById('sumBody').innerHTML=
@@ -3561,10 +3614,33 @@ function countTo(el,from,to,pre){
   requestAnimationFrame(step);
 }
 
+/* Ver.55: [stated] เปิดแอปมาต้องซ่อนยอดเงินเสมอ กดเปิดเองได้
+   เก็บสถานะไว้ในตัวแปรเฉยๆ ไม่เขียนลงเครื่อง เปิดใหม่จึงซ่อนเสมอ */
+var _balShown=false;
+var EYE_ON='<svg viewBox="0 0 24 24"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="3"/></svg>';
+var EYE_OFF='<svg viewBox="0 0 24 24"><path d="M4 4.5 20 20M9.5 6.1A9.6 9.6 0 0 1 12 5.5c6 0 9.5 6.5 9.5 6.5a17 17 0 0 1-3.3 3.9M6.4 8.3A17.4 17.4 0 0 0 2.5 12S6 18.5 12 18.5c1 0 1.9-.2 2.7-.5"/><path d="M10 10a3 3 0 0 0 4 4"/></svg>';
+function maskAmt(t){ return String(t).replace(/\d/g,'•'); }
+function toggleBal(){
+  _balShown=!_balShown; buzz(8);
+  _lastBal=balance();      /* กลับมาเปิดอย่าให้นับขึ้นใหม่จาก 0 */
+  renderHome();
+}
+function paintBal(){
+  var el=document.getElementById('balNum'),eb=document.getElementById('eyeBtn');
+  if(!el)return;
+  if(eb)eb.innerHTML=_balShown?EYE_ON:EYE_OFF;
+  el.classList.toggle('masked',!_balShown);
+  if(!_balShown){
+    var raw=fmt(balance());
+    el.innerHTML='<span class="bt">฿</span>'+maskAmt(raw);
+  }
+}
 function renderHome(){
   acctLine();
   var b=balance(),el=document.getElementById('balNum');
-  countUp(el,_lastBal===null?b:_lastBal,b);_lastBal=b;
+  if(_balShown)countUp(el,_lastBal===null?b:_lastBal,b);
+  _lastBal=b;
+  paintBal();
   /* Ver.27: จดใหม่เสร็จ ยอดวูบเป็นสีเขียวแวบเดียว บอกว่าเข้าแล้วนะ
      ต้องถอดคลาสแล้วบังคับ reflow ก่อน ไม่งั้นสั่งซ้ำติดๆ กันจะไม่เล่นรอบสอง */
   if(_fxFlash){_fxFlash=false;el.classList.remove('fx');void el.offsetWidth;el.classList.add('fx');}
@@ -3575,7 +3651,7 @@ function renderHome(){
   document.getElementById('mInSub').textContent='';
   document.getElementById('mOutSub').textContent='';
   document.getElementById('heroFoot').textContent=n
-    ? (net>=0?'เดือนนี้เหลือ ':'เดือนนี้ติดลบ ')+fmt(Math.abs(net))
+    ? (net>=0?'เดือนนี้เหลือ ':'เดือนนี้ติดลบ ')+(_balShown?fmt(Math.abs(net)):maskAmt(fmt(Math.abs(net))))
     : 'ยังไม่มีรายการในเดือนนี้';
   _hlQ='';   /* Ver.27: หน้าแรกไม่ต้องไฮไลต์อะไร */
   var list=sortEntries(D.entries).slice(0,6);
@@ -3684,7 +3760,7 @@ function renderAvg(){
   var pick=(D.avgPins&&D.avgPins.length)?D.avgPins.slice():ks.slice(0,4);
   var rows=pick.map(function(c){
     var v=cur.by[c]||0,pv=prev.by[c]||0;
-    return '<div class="avr">'+catDotN(c,'out','lg')
+    return '<div class="avr">'+catIcoTile(c,'out')
      +'<span class="avk"><b>'+esc(c)+'</b>'
      +'<i>รวม '+fmt(v)+' ใน '+w.d+' วัน</i></span>'
      +avgDelta(v/w.d,pv?pv/w.d:0)
@@ -3701,7 +3777,7 @@ function drawAvgPick(){
   var rows=D.cats.out.map(function(c,i){
     var on=(D.avgPins||[]).indexOf(c.n)>=0;
     return '<button class="setrow" onclick="toggleAvgPin('+i+')">'
-     +catDot(c.c,'lg')+'<span class="cn">'+esc(c.n)+'</span>'
+     +catIcoTile(c.n,'out','lg')+'<span class="cn">'+esc(c.n)+'</span>'
      +'<span class="go">'+(on?'✓':'')+'</span></button>';}).join('');
   paint('เลือกหมวดที่จะโชว์',
    '<div class="hintline">ไม่เลือกเลย = โชว์ 4 หมวดที่จ่ายเยอะสุดของช่วงนั้นให้เอง</div>'
@@ -4179,7 +4255,7 @@ function drawAccount(){
    +stat
    +'<div class="acrow"><span class="ack">รายการทั้งหมด</span><span class="acv">'+fmt(nEnt)+' รายการ</span></div>'
    +(first?'<div class="acrow"><span class="ack">จดมาตั้งแต่</span><span class="acv">'+esc(first)+'</span></div>':'')
-   +'<div class="acrow"><span class="ack">เวอร์ชัน</span><span class="acv">Muifei Ver.54</span></div>'
+   +'<div class="acrow"><span class="ack">เวอร์ชัน</span><span class="acv">Muifei Ver.57</span></div>'
    +'<div style="height:14px"></div>'
    +(DEMO?'':'<button class="btn btn-out" onclick="sheetPush(drawBackup)">สำรองข้อมูล และไฟล์ตาราง</button>')
    +'<div style="height:8px"></div>'
@@ -4462,6 +4538,10 @@ function openForm(id,pre,bidx,toBasket){
   draft.calYm=monthOf(draft.date);
   draft.rows=[e?newRow(e.name,e.amount,e.cat,type)
                :newRow((pre&&pre.name)||'',(pre&&pre.amount!=null)?pre.amount:'',(pre&&pre.cat)||'',type)];
+  /* Ver.55: [stated] "เดิมมี1 แถวให้บันทึก เพิ่มแถวอีก"
+     เปิดมา 2 แถวเฉพาะตอนจดใหม่หลายรายการ — แก้ของเก่า/จิ้มจากชิป ยังแถวเดียวเหมือนเดิม
+     แถวว่างไม่ถูกบันทึกอยู่แล้วเพราะ liveRows() กรองออก */
+  if(mode==='db'&&!editId&&!(pre&&pre.name))draft.rows.push(newRow('','','',type));
   draft.multi=(mode==='db'&&!editId);
   if(sheetStack.length)drawForm(!!(pre&&pre.name));
   else sheetOpen(function(){drawForm(!!(pre&&pre.name));});
@@ -4485,7 +4565,7 @@ function rowHtml(r,i){
    +'<span class="rcw">'+rcBtn(r,i)
    +(r.catOpen?('<div class="rcm">'+cats.map(function(c,ci){
       return '<button class="rcmi'+((c.n===r.cat&&(hasN||r.catSet))?' on':'')+'" onclick="pickRowCat('+i+','+ci+')">'
-       +catDot(c.c)+'<span class="cn">'+esc(c.n)+'</span><i>✓</i></button>';}).join('')+'</div>'):'')
+       +catIcoTile(c.n,draft.type)+'<span class="cn">'+esc(c.n)+'</span><i>✓</i></button>';}).join('')+'</div>'):'')
    +'</span>'
    +'<span class="fm money sm'+(filled?' filled':'')+'" id="moneyBox'+i+'"><span class="cur">฿</span>'
    +'<input type="number" inputmode="decimal" id="fAmt'+i+'" value="'+(r.a===''?'':r.a)+'" oninput="onRowAmt('+i+',this.value)" onfocus="hideSug()" placeholder="0"></span>'
@@ -4504,7 +4584,7 @@ function rcBtn(r,i){
   var col=show?catColor(r.cat,draft.type):'';
   return '<button class="rc'+(show?' fill':' ph')+'"'
    +' onclick="toggleRowCat('+i+')" id="rcat'+i+'">'
-   +(show?catDot(col):'<span class="cdot ph"></span>')
+   +(show?catIcoTile(r.cat,draft.type):'<span class="cdot ph"></span>')
    +'<b>'+(show?esc(r.cat):'เลือกหมวด')+'</b><i>'+(r.catOpen?'\u25b4':'\u25be')+'</i></button>';
 }
 /* ================= Ver.39 — จัดการชิปประจำจากในฟอร์ม =================
@@ -5076,7 +5156,7 @@ function renderSet(){
       DEMO?'ล้างข้อมูลตัวอย่างทิ้ง กลับไปจอเข้าสู่ระบบ':(_sbErr?'ซิงก์ล่าสุดไม่สำเร็จ':shortMail(_sbMail)),
       '','sbLogout()','<span class="sgo">›</span>')
    +'</div></div>';
-  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.54 · '+(DEMO?'โหมดทดลอง':'ข้อมูลเก็บบนบัญชีของคุณ')+'</div>';
+  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.57 · '+(DEMO?'โหมดทดลอง':'ข้อมูลเก็บบนบัญชีของคุณ')+'</div>';
   document.getElementById('setBody').innerHTML=h;
 }
 function toggleAdv(){advOpen=!advOpen;buzz(8);renderSet();}
@@ -5105,7 +5185,7 @@ function drawCatList(){
   var rows=arr.map(function(c,i){
     var used=D.entries.filter(function(e){return e.cat===c.n&&e.type===curCatType;}).length;
     return '<button class="setrow" onclick="editCat(\''+curCatType+'\','+i+')">'
-     +catDot(c.c,'lg')+'<span class="cn">'+esc(c.n)+'</span><span class="go">'+(used?used+' รายการ ':'')+'›</span></button>';}).join('');
+     +catIcoTile(c.n,curCatType,'lg')+'<span class="cn">'+esc(c.n)+'</span><span class="go">'+(used?used+' รายการ ':'')+'›</span></button>';}).join('');
   paint(curCatType==='out'?'หมวดรายจ่าย':'หมวดรายรับ',
    '<div class="grp">'+rows+'</div>'
    +'<button class="btn btn-out" onclick="editCat(\''+curCatType+'\',-1)">+ เพิ่มหมวดใหม่</button>');
@@ -5130,9 +5210,17 @@ function editPin(i){
 }
 function editCat(t,i){
   var c=i>=0?D.cats[t][i]:null;
-  edit={kind:'cat',type:t,idx:i,n:c?c.n:'',c:c?c.c:SWATCH[D.cats[t].length%SWATCH.length]};
+  edit={kind:'cat',type:t,idx:i,n:c?c.n:'',c:c?c.c:SWATCH[D.cats[t].length%SWATCH.length],
+        ic:(c&&c.ic)||''};
   sheetPush(drawEdit);
 }
+function icoGrid(){
+  var cur=edit.ic||catIcoKey(edit.n||'',edit.type);
+  return ICO_PICK.map(function(k){
+    return '<button class="'+(k===cur?'on':'')+'" onclick="pickIco(\''+k+'\')" aria-label="'+k+'">'
+     +'<svg viewBox="0 0 24 24">'+CATICO[k]+'</svg></button>';}).join('');
+}
+function pickIco(k){edit.ic=k;buzz(8);drawEdit();}
 function drawEdit(){
   curSheet='edit';
   if(edit.kind==='cat'){
@@ -5141,6 +5229,7 @@ function drawEdit(){
     paint(edit.idx<0?'เพิ่มหมวดใหม่':'แก้หมวด',
       '<div class="field"><span class="fl">ชื่อหมวด</span><input type="text" id="eNm" value="'+esc(edit.n)+'" oninput="edit.n=this.value"></div>'
      +'<div class="field"><span class="fl">สีประจำหมวด</span><div class="swatches">'+sw+'</div></div>'
+     +'<div class="field"><span class="fl">ไอคอน</span><div class="icgrid">'+icoGrid()+'</div></div>'
      +'<button class="btn btn-main" onclick="saveEdit()">บันทึก</button>'
      +(edit.idx>=0&&D.cats[edit.type].length>1?'<div class="btn-row"><button class="btn btn-danger" onclick="removeEdit()">ลบหมวดนี้</button></div>':''));
     return;
@@ -5149,7 +5238,7 @@ function drawEdit(){
   var chips=cats.map(function(c,i){
     var on=c.n===edit.cat;
     return '<button class="chip catpick'+(on?' on':'')+'"'
-     +' onclick="pickEditCat('+i+')">'+catDot(c.c)+esc(c.n)+'</button>';}).join('');
+     +' onclick="pickEditCat('+i+')">'+catIcoTile(c.n,edit.type)+esc(c.n)+'</button>';}).join('');
   paint(edit.idx<0?'เพิ่มชิปใหม่':'แก้ชิป',
    '<div class="field"><span class="fl">ชื่อของที่ซื้อประจำ</span><input type="text" id="eNm" value="'+esc(edit.n)+'" oninput="edit.n=this.value" placeholder="เช่น ค่าข้าว, ค่าน้ำมัน"></div>'
    +'<div class="seg"><button class="'+(edit.type==='out'?'on o':'')+'" onclick="setEditType(\'out\')">จ่ายออก</button>'
@@ -5167,9 +5256,9 @@ function saveEdit(){
   if(edit.kind==='cat'){
     var arr=D.cats[edit.type];
     for(var i=0;i<arr.length;i++)if(arr[i].n===n&&i!==edit.idx){toast('มีหมวดชื่อนี้แล้ว','del');return;}
-    if(edit.idx<0){arr.splice(Math.max(0,arr.length-1),0,{n:n,c:edit.c,w:[n]});save();sheetBack();render();toast('เพิ่มหมวด '+n+' แล้ว','ok');return;}
+    if(edit.idx<0){arr.splice(Math.max(0,arr.length-1),0,{n:n,c:edit.c,w:[n],ic:edit.ic||''});save();sheetBack();render();toast('เพิ่มหมวด '+n+' แล้ว','ok');return;}
     var old=arr[edit.idx].n;
-    arr[edit.idx].n=n;arr[edit.idx].c=edit.c;
+    arr[edit.idx].n=n;arr[edit.idx].c=edit.c;arr[edit.idx].ic=edit.ic||'';
     if(old!==n){
       D.entries.forEach(function(e){if(e.cat===old&&e.type===edit.type)e.cat=n;});
       D.basket.forEach(function(e){if(e.cat===old&&e.type===edit.type)e.cat=n;});
