@@ -4404,7 +4404,7 @@ function drawAccount(){
    +stat
    +'<div class="acrow"><span class="ack">รายการทั้งหมด</span><span class="acv">'+fmt(nEnt)+' รายการ</span></div>'
    +(first?'<div class="acrow"><span class="ack">จดมาตั้งแต่</span><span class="acv">'+esc(first)+'</span></div>':'')
-   +'<div class="acrow"><span class="ack">เวอร์ชัน</span><span class="acv">Muifei Ver.66</span></div>'
+   +'<div class="acrow"><span class="ack">เวอร์ชัน</span><span class="acv">Muifei Ver.67</span></div>'
    +'<div style="height:14px"></div>'
    +(DEMO?'':'<button class="btn btn-out" onclick="sheetPush(drawBackup)">สำรองข้อมูล และไฟล์ตาราง</button>')
    +'<div style="height:8px"></div>'
@@ -4738,7 +4738,8 @@ function rcBtn(r,i){
   var col=show?catColor(r.cat,draft.type):'';
   return '<button class="rc'+(show?' fill':' ph')+'"'
    +' onclick="toggleRowCat('+i+')" id="rcat'+i+'">'
-   +(show?catIcoTile(r.cat,draft.type):'<span class="cdot ph"></span>')
+   /* Ver.67: [stated] "เอาไอคอนในรูปที่วงไว้ออก" — ปุ่มหมวดในแถวเหลือชื่อกับ ▾ เท่านั้น */
+   +''
    +'<b>'+(show?esc(r.cat):'เลือกหมวด')+'</b><i>'+(r.catOpen?'\u25b4':'\u25be')+'</i></button>';
 }
 /* ================= Ver.39 — จัดการชิปประจำจากในฟอร์ม =================
@@ -5309,7 +5310,7 @@ function renderSet(){
       DEMO?'ล้างข้อมูลตัวอย่างทิ้ง กลับไปจอเข้าสู่ระบบ':(_sbErr?'ซิงก์ล่าสุดไม่สำเร็จ':shortMail(_sbMail)),
       '','sbLogout()','<span class="sgo">›</span>')
    +'</div></div>';
-  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.66 · '+(DEMO?'โหมดทดลอง':'ข้อมูลเก็บบนบัญชีของคุณ')+'</div>';
+  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.67 · '+(DEMO?'โหมดทดลอง':'ข้อมูลเก็บบนบัญชีของคุณ')+'</div>';
   document.getElementById('setBody').innerHTML=h;
 }
 function toggleAdv(){advOpen=!advOpen;buzz(8);renderSet();}
