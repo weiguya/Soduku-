@@ -1,0 +1,17 @@
+{
+  "name": "Muifei",
+  "short_name": "Muifei",
+  "description": "บัญชีรับ-จ่ายในบ้าน",
+  "lang": "th",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#EAF1F8",
+  "theme_color": "#1B7FC0",
+  "icons": [
+    { "src": "./icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "./icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "./icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

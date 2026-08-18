@@ -2084,6 +2084,26 @@ body.dark mark{background:rgba(90,175,240,.26)}
 .tile.tap{cursor:pointer;-webkit-tap-highlight-color:transparent}
 .tile.tap:active{transform:scale(.985)}
 </style>
+<style id="skin50">
+/* Ver.61 — แถบชวนติดตั้ง โผล่เฉพาะตอนที่เบราว์เซอร์ยอมให้ติดตั้งจริงเท่านั้น */
+.pwabar{position:fixed;left:10px;right:10px;bottom:calc(76px + env(safe-area-inset-bottom));
+  z-index:120;display:none;align-items:center;gap:8px;padding:10px 10px 10px 14px;
+  background:var(--card);border:1px solid var(--line2);border-radius:14px;
+  box-shadow:0 8px 24px -10px rgba(16,20,37,.35)}
+.pwabar.on{display:flex}
+.pwabar .pwt{flex:1;min-width:0;font-size:12px;color:var(--ink2);line-height:1.4}
+.pwabar .pwyes{flex:0 0 auto;height:32px;padding:0 14px;border:0;border-radius:9px;
+  background:var(--fill);color:#fff;font-family:inherit;font-size:13px;font-weight:600}
+.pwabar .pwno{flex:0 0 auto;width:28px;height:28px;border:0;border-radius:50%;
+  background:transparent;color:var(--ink3);font-size:14px;padding:0}
+</style>
+<link rel="manifest" href="./manifest.webmanifest">
+<meta name="theme-color" content="#1B7FC0">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Muifei">
+<link rel="apple-touch-icon" href="./icon-192.png">
 </head>
 <body>
 <div class="wall"><i class="w1"></i><i class="w2"></i><i class="w3"></i></div>
@@ -2208,6 +2228,11 @@ body.dark mark{background:rgba(90,175,240,.26)}
     </div>
   </div>
   <div class="shbody" id="shBody"></div>
+</div>
+<div class="pwabar" id="pwaBar">
+  <span class="pwt">ติดตั้ง Muifei ลงเครื่อง เปิดเร็วกว่าและไม่มีแถบเบราว์เซอร์</span>
+  <button class="pwyes" onclick="pwaInstall()">ติดตั้ง</button>
+  <button class="pwno" onclick="pwaNo()" aria-label="ไม่ต้อง">✕</button>
 </div>
 <div class="toast" id="toast"></div>
 
@@ -4301,7 +4326,7 @@ function drawAccount(){
    +stat
    +'<div class="acrow"><span class="ack">รายการทั้งหมด</span><span class="acv">'+fmt(nEnt)+' รายการ</span></div>'
    +(first?'<div class="acrow"><span class="ack">จดมาตั้งแต่</span><span class="acv">'+esc(first)+'</span></div>':'')
-   +'<div class="acrow"><span class="ack">เวอร์ชัน</span><span class="acv">Muifei Ver.60</span></div>'
+   +'<div class="acrow"><span class="ack">เวอร์ชัน</span><span class="acv">Muifei Ver.61</span></div>'
    +'<div style="height:14px"></div>'
    +(DEMO?'':'<button class="btn btn-out" onclick="sheetPush(drawBackup)">สำรองข้อมูล และไฟล์ตาราง</button>')
    +'<div style="height:8px"></div>'
@@ -5201,7 +5226,7 @@ function renderSet(){
       DEMO?'ล้างข้อมูลตัวอย่างทิ้ง กลับไปจอเข้าสู่ระบบ':(_sbErr?'ซิงก์ล่าสุดไม่สำเร็จ':shortMail(_sbMail)),
       '','sbLogout()','<span class="sgo">›</span>')
    +'</div></div>';
-  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.60 · '+(DEMO?'โหมดทดลอง':'ข้อมูลเก็บบนบัญชีของคุณ')+'</div>';
+  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.61 · '+(DEMO?'โหมดทดลอง':'ข้อมูลเก็บบนบัญชีของคุณ')+'</div>';
   document.getElementById('setBody').innerHTML=h;
 }
 function toggleAdv(){advOpen=!advOpen;buzz(8);renderSet();}
@@ -5439,6 +5464,33 @@ function startApp(){
   if(!D.setup)document.getElementById('first').classList.remove('hide');
 }
 sbBoot();
+
+/* ================= Ver.61 — ทำให้ติดตั้งลงเครื่องได้ (PWA) =================
+   sw.js เป็น network-first กับ index.html เสมอ อัปเวอร์ชันใหม่แล้วเห็นทันที
+   ไม่ต้องล้างแคช และไม่แตะอะไรที่เป็นข้อมูลจาก Supabase เลย */
+if('serviceWorker' in navigator){
+  window.addEventListener('load',function(){
+    navigator.serviceWorker.register('./sw.js').catch(function(){});
+  });
+}
+var _pwaEvt=null;
+window.addEventListener('beforeinstallprompt',function(e){
+  e.preventDefault(); _pwaEvt=e; pwaBarShow();
+});
+window.addEventListener('appinstalled',function(){ _pwaEvt=null; pwaBarHide(); });
+function pwaDismissed(){ try{ return LS.getItem('pwa_hide')==='1'; }catch(e){ return false; } }
+function pwaBarShow(){
+  if(pwaDismissed())return;
+  if(window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches)return;
+  var b=document.getElementById('pwaBar'); if(b)b.classList.add('on');
+}
+function pwaBarHide(){ var b=document.getElementById('pwaBar'); if(b)b.classList.remove('on'); }
+function pwaInstall(){
+  if(!_pwaEvt)return;
+  _pwaEvt.prompt();
+  _pwaEvt.userChoice.then(function(){ _pwaEvt=null; pwaBarHide(); });
+}
+function pwaNo(){ try{ LS.setItem('pwa_hide','1'); }catch(e){} pwaBarHide(); }
 </script>
 </body>
 </html>
