@@ -2017,8 +2017,7 @@ body.dark mark{background:rgba(90,175,240,.26)}
 /* [2] ไอคอนหมวดขนาดเล็ก ใช้แทนจุดสีในลิสต์/legend/ฟอร์ม */
 .cico{flex:0 0 22px;width:22px;height:22px;border-radius:7px;display:inline-flex;align-items:center;
   justify-content:center;vertical-align:middle}
-.cico svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:1.8;
-  stroke-linecap:round;stroke-linejoin:round}
+.cico svg{width:13px;height:13px;fill:currentColor;stroke:none}
 .cico.lg{flex:0 0 30px;width:30px;height:30px;border-radius:9px}
 .cico.lg svg{width:17px;height:17px}
 .rc .cico{margin-right:6px;flex:0 0 18px;width:18px;height:18px;border-radius:6px}
@@ -2026,13 +2025,13 @@ body.dark mark{background:rgba(90,175,240,.26)}
 /* Ver.60: [stated] ชิปซื้อประจำ "เอาไอคอนออก ไม่ต้องทำสีด้วย" — ชิปเป็นแค่ปุ่มลัด
    ไม่ใช่ป้ายบอกหมวด กฎด้านล่างจึงเหลือใช้กับชิปอื่น (เลือกหมวด) เท่านั้น */
 .chip .cico{background:none!important;margin-right:5px;flex:0 0 15px;width:15px;height:15px;border-radius:0}
-.chip .cico svg{width:15px;height:15px;stroke-width:1.9}
+.chip .cico svg{width:15px;height:15px}
 /* ตารางเลือกไอคอนในหน้าแก้หมวด */
-.icgrid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.icgrid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;max-height:216px;overflow-y:auto;
+  padding:2px;-webkit-overflow-scrolling:touch}
 .icgrid button{aspect-ratio:1;border-radius:11px;border:1px solid var(--line2);background:var(--card);
   display:grid;place-items:center;color:var(--ink2);padding:0}
-.icgrid button svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.7;
-  stroke-linecap:round;stroke-linejoin:round}
+.icgrid button svg{width:19px;height:19px;fill:currentColor;stroke:none}
 .icgrid button.on{border-color:transparent;box-shadow:0 0 0 2.5px var(--ink)}
 #login .lgl{display:block;font-size:12px;color:var(--ink3);font-weight:500;margin:0 0 5px}
 /* [6] ซ่อนยอดเงิน */
@@ -2548,47 +2547,98 @@ function acctLine(){ renderBk(); }
 /* Ver.54: ไอคอนหมวด แทนตัวอักษรแรกของชื่อหมวด
    จับจากคำในชื่อหมวด ไม่ใช่ชื่อเต็ม เพราะเขาเปลี่ยนชื่อหมวดเองได้ (อาหาร / หนี้ / ค่าน้ำค่าไฟ)
    ลำดับสำคัญ: ไฟ/เน็ต ต้องมาก่อน น้ำมัน ไม่งั้น "ค่าน้ำค่าไฟ" จะกลายเป็นรถ */
+/* Ver.63 — [stated] "เปลี่ยนสไตล์วาดใหม่เลย ตามรูปที่ให้ไป และเพิ่มจำนวนให้เลือกเยอะขึ้น"
+   รูปเรฟเป็น glyph ทึบสีเดียว ไม่มีเส้นขอบ — ดีกว่าเส้นบางตอนย่อเหลือ 22px
+   และยังรับสีจากหมวดได้เหมือนเดิม จึงไม่เสียช่องเลือกสี 12 สี */
 var CATICO={
-  food:'<path d="M4 4v6a3 3 0 0 0 6 0V4M7 10v10"/><path d="M17.5 4c-1.4 1.6-2 3.4-2 5.5 0 1.6.7 2.5 2 2.5V20"/>',
-  bill:'<path d="M13 3 5 13.5h5.5L10 21l8-10.5h-5.5z"/>',
-  car:'<path d="M4.5 16v2.5h3V16M16.5 16v2.5h3V16"/><path d="M3.5 16v-4l2-5h13l2 5v4z"/><path d="M6.5 12.8h2M15.5 12.8h2"/>',
-  health:'<path d="M12 20s-7-4.3-7-9a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 4.7-7 9-7 9Z"/>',
-  edu:'<path d="M3.5 7.5 12 4l8.5 3.5L12 11z"/><path d="M6.5 9.4V15c0 1.5 2.5 2.6 5.5 2.6s5.5-1.1 5.5-2.6V9.4"/>',
-  gift:'<path d="M4 10h16v9.5H4z"/><path d="M4 10V7.5h16V10M12 7.5V20"/><path d="M12 7.5C10.5 4.5 7 4.5 7 6.4c0 1 1.2 1.4 5 1.1Zm0 0c1.5-3 5-3 5-1.1 0 1-1.2 1.4-5 1.1Z"/>',
-  home:'<path d="M4.5 8.5h15l-1.2 11H5.7z"/><path d="M8.8 8.5c0-2.6 1.4-4 3.2-4s3.2 1.4 3.2 4"/>',
-  debt:'<path d="M4 7.5h16v9H4z"/><circle cx="12" cy="12" r="2.4"/><path d="M7 12h.01M17 12h.01"/>',
-  wallet:'<path d="M4 7.5h13a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H4z"/><path d="M4 7.5v-2h11"/><circle cx="16.5" cy="13.5" r="1.1"/>',
-  sale:'<path d="M11 4h6.5A2.5 2.5 0 0 1 20 6.5V13l-8 7-8-8z"/><circle cx="15.5" cy="8.5" r="1.2"/>',
-  gotin:'<path d="M12 4v11"/><path d="m7.5 10.5 4.5 4.5 4.5-4.5"/><path d="M4.5 19.5h15"/>',
-  other:'<circle cx="6.5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="17.5" cy="12" r="1.5"/>',
-  cart:'<path d="M3.5 5h2l2.2 9.5h9.6L19.5 8H7"/><circle cx="9.5" cy="18.5" r="1.3"/><circle cx="16.5" cy="18.5" r="1.3"/>',
-  coffee:'<path d="M5 8h11v5.5a4 4 0 0 1-4 4H9a4 4 0 0 1-4-4z"/><path d="M16 9.5h1.8a2.2 2.2 0 0 1 0 4.4H16"/><path d="M7.5 4.5v1.6M11 4v2M14.5 4.5v1.6"/>',
-  phone:'<rect x="7" y="3.5" width="10" height="17" rx="2.4"/><path d="M11 17.6h2"/>',
-  pet:'<circle cx="8" cy="9" r="1.7"/><circle cx="16" cy="9" r="1.7"/><circle cx="5.6" cy="13.6" r="1.5"/><circle cx="18.4" cy="13.6" r="1.5"/><path d="M12 12.5c2.6 0 4.6 2.2 4.6 4.2 0 1.6-1.4 2.6-3 2.3-1-.2-2.2-.2-3.2 0-1.6.3-3-.7-3-2.3 0-2 2-4.2 4.6-4.2Z"/>',
-  tool:'<path d="M14.5 4.5a4 4 0 0 0 5 5L9.8 19.2a2.4 2.4 0 0 1-3.4-3.4z"/><path d="m5 6.5 2.5-2.5 3 3-2.5 2.5z"/>',
-  sport:'<circle cx="12" cy="12" r="8"/><path d="M12 4c2.4 2.2 2.4 13.8 0 16M4.3 10.5c4 1.6 11.4 1.6 15.4 0"/>',
-  plane:'<path d="M10.5 20.5 12 16l7.5-2.2c.8-.3 1.2-1 1.2-1.7 0-1-.9-1.7-1.9-1.5L12 12l-4.6-4.4-1.9.6 2.9 5-3.4 1L3.4 13l-1.2.4 1.7 3.3L7 18.6z"/>',
-  save:'<path d="M12 3.5v17M8 7.5h6.2a2.6 2.6 0 0 1 0 5.2H9.8a2.6 2.6 0 0 0 0 5.2H16"/>',
-  star:'<path d="m12 4 2.4 5 5.6.8-4 3.9 1 5.5-5-2.6-5 2.6 1-5.5-4-3.9 5.6-.8z"/>'
+ food:'<path d="M7.2 3v6.2a2 2 0 0 1-1.4 1.9V21h-2V11.1A2 2 0 0 1 2.4 9.2V3h1.5v5.3h1V3h1.5v5.3h1V3zM16.6 3c-1.9 0-3.2 2.2-3.2 4.9 0 2 .8 3.5 2 4.1V21h2.4v-9c1.2-.6 2-2.1 2-4.1C19.8 5.2 18.5 3 16.6 3z"/>',
+ rice:'<path d="M3 11h18a9 9 0 0 1-9 8.6A9 9 0 0 1 3 11zM8.5 5.4c1.2-1 2.6-1 3.6 0 .9.9 2 1 3.2.3l.8 1.5c-1.9 1-3.8.8-5.2-.5-.4-.4-.7-.4-1.2 0z"/>',
+ coffee:'<path d="M4 7h12v6.5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5zm13 1.4h1.5a3.1 3.1 0 0 1 0 6.2H17zM6.6 2.4l1 2.2-.9 1H5l1-1zM10.6 2.4l1 2.2-.9 1H9l1-1zM14.6 2.4l1 2.2-.9 1H13l1-1zM3 20h14v2H3z"/>',
+ drink:'<path d="M9.5 2h5l.6 3H8.9zM8.4 6.6h7.2l-.8 6.1a2.8 2.8 0 0 1-2 2.4V20h2.4v2H8.8v-2h2.4v-4.9a2.8 2.8 0 0 1-2-2.4z"/>',
+ fruit:'<path d="M12.6 6.3c1.6-1.4 3.6-1.6 5.1-.5 2 1.5 2.4 5 1 8.3-1.3 3.2-3.7 5.4-5.5 4.9-.5-.2-.9-.2-1.4 0-1.8.5-4.2-1.7-5.5-4.9-1.4-3.3-1-6.8 1-8.3 1.5-1.1 3.5-.9 5.1.5zM12.2 5c-.3-1.8.7-3.4 2.6-4 .4 1.9-.6 3.5-2.6 4z"/>',
+ cart:'<path d="M2 3h3.2l.7 3H21l-2.2 8.4H8L7.2 18h11v2H5.6L4 6.3 3.4 5H2zM9.5 19.4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zM17 19.4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3z"/>',
+ home:'<path d="M4 8.5h16l-1.3 13H5.3zM8.4 8V6.2a3.6 3.6 0 0 1 7.2 0V8h-2V6.2a1.6 1.6 0 0 0-3.2 0V8z"/>',
+ rent:'<path d="M3 21V4.5L12 2v19zm11 0V8.5l7 2V21zM6 7h3v2H6zm0 4h3v2H6zm0 4h3v2H6zm10.5-1h2v2h-2zm0 4h2v2h-2z"/>',
+ bill:'<path d="M13.6 2 5 13.4h5.3L8.9 22 19 10.2h-5.4z"/>',
+ water:'<path d="M12 2.5c4.2 4.6 6.4 8 6.4 10.8A6.4 6.4 0 0 1 12 21.5a6.4 6.4 0 0 1-6.4-8.2C5.6 10.5 7.8 7.1 12 2.5z"/>',
+ wifi:'<path d="M12 17.2a2.3 2.3 0 1 1 0 4.6 2.3 2.3 0 0 1 0-4.6zM12 11.4c1.9 0 3.6.7 4.9 1.9l-2 2a4.2 4.2 0 0 0-5.8 0l-2-2a7 7 0 0 1 4.9-1.9zM12 5.6c3.5 0 6.7 1.4 9 3.7l-2 2A10 10 0 0 0 12 8.4a10 10 0 0 0-7 2.9l-2-2A12.7 12.7 0 0 1 12 5.6z"/>',
+ phone:'<path d="M7 1.5h10a2 2 0 0 1 2 2v17a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-17a2 2 0 0 1 2-2zm3 17h4v1.6h-4z"/>',
+ car:'<path d="M5 11 6.8 6h10.4L19 11zM3 12.4h18V17h-2.2v1.8a1.4 1.4 0 0 1-2.8 0V17H8v1.8a1.4 1.4 0 0 1-2.8 0V17H3zm3 1.5a1.2 1.2 0 1 0 0 2.4 1.2 1.2 0 0 0 0-2.4zm12 0a1.2 1.2 0 1 0 0 2.4 1.2 1.2 0 0 0 0-2.4z"/>',
+ fuel:'<path d="M4 3.2A1.2 1.2 0 0 1 5.2 2h7.6A1.2 1.2 0 0 1 14 3.2V21H4zM6.3 4.6v3.8h5.4V4.6zM16 7.4l2.6 2.6c.3.3.4.6.4 1v6.6a1.5 1.5 0 0 1-3 0v-5h-1.6V7.4z"/>',
+ bus:'<path d="M4 4.5A2.5 2.5 0 0 1 6.5 2h11A2.5 2.5 0 0 1 20 4.5V16H4zm2.6 1.8v4.8h10.8V6.3zM4 17.4h16v1.4a1.4 1.4 0 0 1-1.4 1.4v1.4a1 1 0 0 1-2 0v-1.4H7.4v1.4a1 1 0 0 1-2 0v-1.4A1.4 1.4 0 0 1 4 18.8zm2.8-4.6a1.2 1.2 0 1 1 0 2.4 1.2 1.2 0 0 1 0-2.4zm10.4 0a1.2 1.2 0 1 1 0 2.4 1.2 1.2 0 0 1 0-2.4z"/>',
+ bike:'<path d="M5.4 13.6a4.4 4.4 0 1 1 0 8.8 4.4 4.4 0 0 1 0-8.8zm0 2.4a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm13.2-2.4a4.4 4.4 0 1 1 0 8.8 4.4 4.4 0 0 1 0-8.8zm0 2.4a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM13.6 3h4.2l1.4 3.4h2.4v2.2h-3.8l-.9-2.2h-1.5v2.2l3.6 3.8-1.6 1.6-4-4.2H8.8L6.4 14 4.6 12.6 7.8 8.4h4.2l-.4-1.6h-2V4.6h3z"/>',
+ health:'<path d="M12 21.2 4.6 14A5 5 0 0 1 12 7.3 5 5 0 0 1 19.4 14z"/>',
+ pill:'<path d="M14.5 2.6a5.4 5.4 0 0 1 7.6 7.6l-4 4-7.6-7.6zM9.2 8l7.6 7.6-3.9 3.9a5.4 5.4 0 0 1-7.6-7.6z"/>',
+ doctor:'<path d="M9.5 2v6a4.5 4.5 0 0 0 9 0V2h-2v6a2.5 2.5 0 0 1-5 0V2zM5.5 2v7.5a6.5 6.5 0 0 0 13 0h-2a4.5 4.5 0 0 1-9 0V2zM18 15a3 3 0 1 1 0 6 3 3 0 0 1 0-6zm0 2a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>',
+ edu:'<path d="M12 3 23 8.5 12 14 1 8.5zM5.5 12.2l6.5 3.2 6.5-3.2v4.4c0 2-2.9 3.6-6.5 3.6s-6.5-1.6-6.5-3.6z"/>',
+ book:'<path d="M11 5.6v14.8c-1.8-1.4-4.2-2.2-6.6-2.2H2.4V3.4h2c2.4 0 4.8.8 6.6 2.2zm2 0c1.8-1.4 4.2-2.2 6.6-2.2h2v14.8h-2.2c-2.4 0-4.8.8-6.4 2.2z"/>',
+ kid:'<path d="M12 2a5 5 0 0 1 5 5 5 5 0 0 1-1 3H8a5 5 0 0 1-1-3 5 5 0 0 1 5-5zm-2 1.8a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm4 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2zM7.5 11.5h9L18 22H6z"/>',
+ pet:'<path d="M6.6 3.5c1.3 0 2.3 1.4 2.3 3.1S7.9 9.7 6.6 9.7 4.3 8.3 4.3 6.6s1-3.1 2.3-3.1zm10.8 0c1.3 0 2.3 1.4 2.3 3.1s-1 3.1-2.3 3.1-2.3-1.4-2.3-3.1 1-3.1 2.3-3.1zM2.8 10.4c1.2 0 2.1 1.2 2.1 2.7s-.9 2.7-2.1 2.7-2.1-1.2-2.1-2.7.9-2.7 2.1-2.7zm18.4 0c1.2 0 2.1 1.2 2.1 2.7s-.9 2.7-2.1 2.7-2.1-1.2-2.1-2.7.9-2.7 2.1-2.7zM12 11.4c3.3 0 5.9 2.8 5.9 5.4 0 2-1.8 3.4-3.9 3-1.3-.3-2.7-.3-4 0-2.1.4-3.9-1-3.9-3 0-2.6 2.6-5.4 5.9-5.4z"/>',
+ gift:'<path d="M3 11h8v11H4a1 1 0 0 1-1-1zm10 0h8v10a1 1 0 0 1-1 1h-7zM2.5 6.5h19V10h-19zM8.8 1.6c1.5 0 2.6 1.4 3.2 3.4.6-2 1.7-3.4 3.2-3.4a2.4 2.4 0 0 1 0 4.9h-6.4a2.4 2.4 0 0 1 0-4.9z"/>',
+ party:'<path d="M5 10.5h14V20H5zM3.5 21h17v2h-17zM11 4.2c0-1 .5-1.6 1-2.2.6.7 1 1.3 1 2.2 0 .9-.4 1.4-1 2-.5-.6-1-1.1-1-2zM6 9.4V7.2a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v2.2zM9 3.9c0-.8.4-1.3.8-1.7.5.5.8 1 .8 1.7s-.3 1.1-.8 1.6c-.4-.5-.8-.9-.8-1.6zm4.4 0c0-.8.4-1.3.8-1.7.5.5.8 1 .8 1.7s-.3 1.1-.8 1.6c-.4-.5-.8-.9-.8-1.6z"/>',
+ movie:'<path d="M2 7h20v13a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1zm6.5 3.5v6.5l5.5-3.2zM2.6 2.6 6 2l1 3.5-3.4.6zM8 1.6l3.4-.6.9 3.5-3.3.6zM13.4.7l3.4-.6.9 3.5-3.4.6z"/>',
+ music:'<path d="M9 18.2a3 3 0 1 1-2-2.8V5.2L21 2.4v12.4a3 3 0 1 1-2-2.8V7.9L9 9.8z"/>',
+ game:'<path d="M7.5 6h9a5.5 5.5 0 0 1 5.4 6.5l-.8 4.3A3 3 0 0 1 16 18.3l-1.3-1.8H9.3L8 18.3a3 3 0 0 1-5.1-1.5l-.8-4.3A5.5 5.5 0 0 1 7.5 6zM6 8.8v1.7H4.3v1.8H6V14h1.8v-1.7h1.7v-1.8H7.8V8.8zm10.6.5a1.3 1.3 0 1 0 0 2.6 1.3 1.3 0 0 0 0-2.6zm-2.6 2.6a1.3 1.3 0 1 0 0 2.6 1.3 1.3 0 0 0 0-2.6z"/>',
+ sport:'<path d="M2 9.5h2.5v5H2zm3.6-1.8h2.6v8.6H5.6zm10.2 0h2.6v8.6h-2.6zm3.7 1.8H22v5h-2.5zM8.8 10.6h6.4v2.8H8.8z"/>',
+ plane:'<path d="M2 13.4 21.2 4.2c.9-.4 1.8.5 1.4 1.4L13.4 22l-2.6-6.8L2 13.4zm9.6.2 4.2-4.2-5.6 2.8z"/>',
+ save:'<path d="M15 5.4c3.4.9 5.8 3.5 6.2 6.6H23v4h-2.3a7.4 7.4 0 0 1-2.2 2.8V21h-3v-1.3a10 10 0 0 1-4.6 0V21h-3v-2.2C6 17.4 4.6 15.3 4.6 13c0-4.3 4.1-7.8 9.2-7.8h.4l3.2-3.2v3.6a9 9 0 0 0-2.4-.2zM8.6 10.4a1.4 1.4 0 1 0 0 2.8 1.4 1.4 0 0 0 0-2.8z"/>',
+ tool:'<path d="M14.8 2.2a6 6 0 0 1 7.1 7.6l-2.4-2.4-2.6.7-.7 2.6 2.4 2.4a6 6 0 0 1-7.6-7.1L13.4 8.4l1.4-1.4zM10.2 12.4l1.4 1.4-7.4 7.4a2 2 0 0 1-2.8-2.8z"/>',
+ debt:'<path d="M2 5h20v14H2zm10 2.6a4.4 4.4 0 1 0 0 8.8 4.4 4.4 0 0 0 0-8.8zM5 7.5h2.5v2H5zm11.5 7H19v2h-2.5z"/>',
+ wallet:'<path d="M3 5.5A2.5 2.5 0 0 1 5.5 3H17v3H5.5A.5.5 0 0 0 5 6.5v.5h13.5A2.5 2.5 0 0 1 21 9.5v9a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 18.5zm14 6.4a1.6 1.6 0 1 0 0 3.2 1.6 1.6 0 0 0 0-3.2z"/>',
+ sale:'<path d="M11.6 2.4H21a.6.6 0 0 1 .6.6v9.4a2 2 0 0 1-.6 1.4l-7.6 7.6a2 2 0 0 1-2.8 0l-7.6-7.6a2 2 0 0 1 0-2.8l7.6-7.6a2 2 0 0 1 1-.6zM17.4 5.4a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/>',
+ gotin:'<path d="M11 2h2v9.2l3.3-3.3 1.4 1.4-5.7 5.7-5.7-5.7 1.4-1.4L11 11.2zM3 15h3.6l1.6 2.6h7.6L17.4 15H21v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/>',
+ beauty:'<path d="M9 8.5h6V22H9zM9.6 2h4.8l.8 5.2H8.8zM17.4 10.6h4V22h-4zm.4-6.4h3.2v5.2h-3.2z"/>',
+ laundry:'<path d="M4 2h16a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1zm2 2.4v2.2h2.4V4.4zm4 0v2.2h2.4V4.4zM12 8.6a5.2 5.2 0 1 0 0 10.4 5.2 5.2 0 0 0 0-10.4zm0 2.4a2.8 2.8 0 1 1 0 5.6 2.8 2.8 0 0 1 0-5.6z"/>',
+ temple:'<path d="M12 1.6 21 7v1.8H3V7zM5 10.4h2.6V18H5zm5.7 0h2.6V18h-2.6zm5.7 0H19V18h-2.6zM3 19.4h18V22H3z"/>',
+ star:'<path d="m12 2.6 2.9 6.1 6.6.9-4.8 4.6 1.2 6.6L12 17.7l-5.9 3.1 1.2-6.6L2.5 9.6l6.6-.9z"/>',
+ other:'<path d="M5.5 9.6a2.4 2.4 0 1 1 0 4.8 2.4 2.4 0 0 1 0-4.8zm6.5 0a2.4 2.4 0 1 1 0 4.8 2.4 2.4 0 0 1 0-4.8zm6.5 0a2.4 2.4 0 1 1 0 4.8 2.4 2.4 0 0 1 0-4.8z"/>'
 };
+var ICO_PICK=['food','rice','coffee','drink','fruit','cart','home','rent','bill','water','wifi','phone',
+              'car','fuel','bus','bike','health','pill','doctor','edu','book','kid','pet','gift',
+              'party','movie','music','game','sport','plane','save','tool','debt','wallet','sale',
+              'gotin','beauty','laundry','temple','star','other'];
 /* Ver.55: หมวดหนึ่งเลือกไอคอนเองได้ เก็บไว้ที่ตัวหมวด (c.ic) ซึ่งอยู่ในก้อน settings
    ไม่ต้องแตะตาราง entries เลย · ไม่ได้เลือก = เดาจากชื่อเหมือนเดิม */
-var ICO_PICK=['food','coffee','cart','home','bill','car','health','edu','gift','debt',
-              'wallet','sale','gotin','phone','pet','tool','sport','plane','save','star','other'];
 function catIcoKey(n,type){
   n=String(n||'');
   var c=catOf(n,type); if(c&&c.ic&&CATICO[c.ic])return c.ic;
-  if(/ไฟ|เน็ต|บิล|โทรศัพท์|ส่วนกลาง|ค่าเช่า|ค่าห้อง/.test(n))return 'bill';
-  if(/น้ำมัน|เดินทาง|รถ|แท็กซี่|วิน/.test(n))return 'car';
-  if(/อาหาร|กิน|ข้าว|เครื่องดื่ม|กาแฟ|ขนม/.test(n))return 'food';
-  if(/สุขภาพ|ยา|หมอ|คลินิก/.test(n))return 'health';
-  if(/ลูก|เรียน|การศึกษา|นักเรียน/.test(n))return 'edu';
-  if(/สังคม|ทำบุญ|ซอง|ของฝาก|งาน/.test(n))return 'gift';
-  if(/ของใช้|บ้าน/.test(n))return 'home';
-  if(/หนี้|กู้|ผ่อน|ดอกเบี้ย/.test(n))return 'debt';
-  if(/เงินเดือน|ค่าจ้าง|ค่าแรง|โบนัส/.test(n))return 'wallet';
-  if(/ขาย/.test(n))return 'sale';
-  if(/ได้รับ|โอน|คืน/.test(n))return 'gotin';
+  if(/\u0e19\u0e49\u0e33\u0e21\u0e31\u0e19|\u0e40\u0e15\u0e34\u0e21\u0e19\u0e49\u0e33\u0e21\u0e31\u0e19|\u0e41\u0e01\u0e4a\u0e2a/.test(n))return 'fuel';
+  if(/\u0e04\u0e48\u0e32\u0e19\u0e49\u0e33|\u0e1b\u0e23\u0e30\u0e1b\u0e32/.test(n))return 'water';
+  if(/\u0e40\u0e19\u0e47\u0e15|\u0e44\u0e27\u0e44\u0e1f|\u0e2d\u0e34\u0e19\u0e40\u0e17\u0e2d\u0e23\u0e4c\u0e40\u0e19\u0e47\u0e15/.test(n))return 'wifi';
+  if(/\u0e42\u0e17\u0e23\u0e28\u0e31\u0e1e\u0e17\u0e4c|\u0e21\u0e37\u0e2d\u0e16\u0e37\u0e2d|\u0e40\u0e15\u0e34\u0e21\u0e40\u0e07\u0e34\u0e19/.test(n))return 'phone';
+  if(/\u0e44\u0e1f|\u0e1a\u0e34\u0e25|\u0e2a\u0e48\u0e27\u0e19\u0e01\u0e25\u0e32\u0e07/.test(n))return 'bill';
+  if(/\u0e04\u0e48\u0e32\u0e40\u0e0a\u0e48\u0e32|\u0e04\u0e48\u0e32\u0e2b\u0e49\u0e2d\u0e07|\u0e2b\u0e2d\u0e1e\u0e31\u0e01|\u0e04\u0e2d\u0e19\u0e42\u0e14/.test(n))return 'rent';
+  if(/\u0e23\u0e16\u0e40\u0e21\u0e25\u0e4c|\u0e23\u0e16\u0e17\u0e31\u0e27\u0e23\u0e4c|\u0e02\u0e19\u0e2a\u0e48\u0e07/.test(n))return 'bus';
+  if(/\u0e21\u0e2d\u0e40\u0e15\u0e2d\u0e23\u0e4c\u0e44\u0e0b\u0e04\u0e4c|\u0e27\u0e34\u0e19/.test(n))return 'bike';
+  if(/\u0e19\u0e49\u0e33\u0e21\u0e31\u0e19|\u0e40\u0e14\u0e34\u0e19\u0e17\u0e32\u0e07|\u0e23\u0e16|\u0e41\u0e17\u0e47\u0e01\u0e0b\u0e35\u0e48/.test(n))return 'car';
+  if(/\u0e01\u0e32\u0e41\u0e1f|\u0e0a\u0e32|\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e14\u0e37\u0e48\u0e21/.test(n))return 'coffee';
+  if(/\u0e40\u0e2b\u0e25\u0e49\u0e32|\u0e40\u0e1a\u0e35\u0e22\u0e23\u0e4c|\u0e19\u0e49\u0e33\u0e2d\u0e31\u0e14\u0e25\u0e21/.test(n))return 'drink';
+  if(/\u0e1c\u0e25\u0e44\u0e21\u0e49|\u0e1c\u0e31\u0e01/.test(n))return 'fruit';
+  if(/\u0e02\u0e49\u0e32\u0e27|\u0e01\u0e31\u0e1a\u0e02\u0e49\u0e32\u0e27|\u0e21\u0e37\u0e49อ/.test(n))return 'rice';
+  if(/\u0e2d\u0e32\u0e2b\u0e32\u0e23|\u0e01\u0e34\u0e19|\u0e02\u0e19\u0e21/.test(n))return 'food';
+  if(/\u0e15\u0e25\u0e32\u0e14|\u0e0b\u0e37\u0e49\u0e2d\u0e02\u0e2d\u0e07|\u0e0a\u0e49\u0e2d\u0e1b/.test(n))return 'cart';
+  if(/\u0e0b\u0e31\u0e01\u0e1c\u0e49\u0e32|\u0e23\u0e35\u0e14/.test(n))return 'laundry';
+  if(/\u0e2a\u0e38\u0e02\u0e20\u0e32\u0e1e|\u0e22\u0e32|\u0e04\u0e25\u0e34\u0e19\u0e34\u0e01/.test(n))return 'health';
+  if(/\u0e2b\u0e21\u0e2d|\u0e42\u0e23\u0e07\u0e1e\u0e22\u0e32\u0e1a\u0e32\u0e25|\u0e15\u0e23\u0e27\u0e08/.test(n))return 'doctor';
+  if(/\u0e2a\u0e27\u0e22|\u0e04\u0e27\u0e32\u0e21\u0e07\u0e32\u0e21|\u0e40\u0e2a\u0e23\u0e34\u0e21|\u0e15\u0e31\u0e14\u0e1c\u0e21/.test(n))return 'beauty';
+  if(/\u0e2d\u0e2d\u0e01\u0e01\u0e33\u0e25\u0e31\u0e07|\u0e22\u0e34\u0e21|\u0e01\u0e35\u0e2c\u0e32/.test(n))return 'sport';
+  if(/\u0e25\u0e39\u0e01|\u0e40\u0e23\u0e35\u0e22\u0e19|\u0e01\u0e32\u0e23\u0e28\u0e36\u0e01\u0e29\u0e32|\u0e19\u0e31\u0e01\u0e40\u0e23\u0e35\u0e22\u0e19|\u0e40\u0e17\u0e2d\u0e21/.test(n))return 'edu';
+  if(/\u0e2b\u0e19\u0e31\u0e07\u0e2a\u0e37\u0e2d|\u0e2b\u0e19\u0e31\u0e07/.test(n))return 'book';
+  if(/\u0e17\u0e33\u0e1a\u0e38\u0e0d|\u0e27\u0e31\u0e14|\u0e1a\u0e23\u0e34\u0e08\u0e32\u0e04/.test(n))return 'temple';
+  if(/\u0e2a\u0e31\u0e07\u0e04\u0e21|\u0e0b\u0e2d\u0e07|\u0e02\u0e2d\u0e07\u0e1d\u0e32\u0e01|\u0e07\u0e32\u0e19|\u0e02\u0e2d\u0e07\u0e02\u0e27\u0e31\u0e0d/.test(n))return 'gift';
+  if(/\u0e40\u0e17\u0e35\u0e48\u0e22\u0e27|\u0e17\u0e23\u0e34\u0e1b|\u0e15\u0e31\u0e4b\u0e27\u0e40\u0e04\u0e23\u0e37\u0e48\u0e2d\u0e07\u0e1a\u0e34\u0e19/.test(n))return 'plane';
+  if(/\u0e2b\u0e19\u0e31\u0e07|\u0e14\u0e39\u0e2b\u0e19\u0e31\u0e07|\u0e40\u0e19\u0e15\u0e1f\u0e25\u0e34\u0e01\u0e0b\u0e4c/.test(n))return 'movie';
+  if(/\u0e40\u0e01\u0e21|\u0e40\u0e15\u0e34\u0e21\u0e40\u0e01\u0e21/.test(n))return 'game';
+  if(/\u0e2b\u0e21\u0e32|\u0e41\u0e21\u0e27|\u0e2a\u0e31\u0e15\u0e27\u0e4c/.test(n))return 'pet';
+  if(/\u0e02\u0e2d\u0e07\u0e43\u0e0a\u0e49|\u0e1a\u0e49\u0e32\u0e19/.test(n))return 'home';
+  if(/\u0e2b\u0e19\u0e35\u0e49|\u0e01\u0e39\u0e49|\u0e1c\u0e48\u0e2d\u0e19|\u0e14\u0e2d\u0e01\u0e40\u0e1a\u0e35\u0e49\u0e22|\u0e41\u0e01\u0e23\u0e47\u0e1a/.test(n))return 'debt';
+  if(/\u0e40\u0e07\u0e34\u0e19\u0e40\u0e14\u0e37\u0e2d\u0e19|\u0e04\u0e48\u0e32\u0e08\u0e49\u0e32\u0e07|\u0e04\u0e48\u0e32\u0e41\u0e23\u0e07|\u0e42\u0e1a\u0e19\u0e31\u0e2a/.test(n))return 'wallet';
+  if(/\u0e2d\u0e2d\u0e21|\u0e2a\u0e30\u0e2a\u0e21|\u0e1d\u0e32\u0e01/.test(n))return 'save';
+  if(/\u0e02\u0e32\u0e22/.test(n))return 'sale';
+  if(/\u0e44\u0e14\u0e49\u0e23\u0e31\u0e1a|\u0e42\u0e2d\u0e19|\u0e04\u0e37\u0e19/.test(n))return 'gotin';
+  if(/\u0e0b\u0e48\u0e2d\u0e21|\u0e0a\u0e48\u0e32\u0e07/.test(n))return 'tool';
+  if(/\u0e40\u0e14\u0e47\u0e01|\u0e17\u0e32\u0e23\u0e01/.test(n))return 'kid';
+  if(/\u0e40\u0e25\u0e35\u0e49\u0e22\u0e07|\u0e1b\u0e32\u0e23\u0e4c\u0e15\u0e35\u0e49|\u0e27\u0e31\u0e19\u0e40\u0e01\u0e34\u0e14/.test(n))return 'party';
   return type==='in'?'wallet':'other';
 }
 function catIcoTile(n,type,cls){
@@ -4326,7 +4376,7 @@ function drawAccount(){
    +stat
    +'<div class="acrow"><span class="ack">รายการทั้งหมด</span><span class="acv">'+fmt(nEnt)+' รายการ</span></div>'
    +(first?'<div class="acrow"><span class="ack">จดมาตั้งแต่</span><span class="acv">'+esc(first)+'</span></div>':'')
-   +'<div class="acrow"><span class="ack">เวอร์ชัน</span><span class="acv">Muifei Ver.61</span></div>'
+   +'<div class="acrow"><span class="ack">เวอร์ชัน</span><span class="acv">Muifei Ver.63</span></div>'
    +'<div style="height:14px"></div>'
    +(DEMO?'':'<button class="btn btn-out" onclick="sheetPush(drawBackup)">สำรองข้อมูล และไฟล์ตาราง</button>')
    +'<div style="height:8px"></div>'
@@ -4635,8 +4685,9 @@ function rowHtml(r,i){
    +'<div class="sugw" id="sug'+i+'"></div></span>'
    +'<span class="rcw">'+rcBtn(r,i)
    +(r.catOpen?('<div class="rcm">'+cats.map(function(c,ci){
+      /* Ver.62: [stated] "ดรอปดาวนหมวด ไม่ต้องใส่ไอคอนมา" — เมนูนี้เอาชื่อล้วน */
       return '<button class="rcmi'+((c.n===r.cat&&(hasN||r.catSet))?' on':'')+'" onclick="pickRowCat('+i+','+ci+')">'
-       +catIcoTile(c.n,draft.type)+'<span class="cn">'+esc(c.n)+'</span><i>✓</i></button>';}).join('')+'</div>'):'')
+       +'<span class="cn">'+esc(c.n)+'</span><i>✓</i></button>';}).join('')+'</div>'):'')
    +'</span>'
    +'<span class="fm money sm'+(filled?' filled':'')+'" id="moneyBox'+i+'"><span class="cur">฿</span>'
    +'<input type="number" inputmode="decimal" id="fAmt'+i+'" value="'+(r.a===''?'':r.a)+'" oninput="onRowAmt('+i+',this.value)" onfocus="hideSug()" placeholder="0"></span>'
@@ -5226,7 +5277,7 @@ function renderSet(){
       DEMO?'ล้างข้อมูลตัวอย่างทิ้ง กลับไปจอเข้าสู่ระบบ':(_sbErr?'ซิงก์ล่าสุดไม่สำเร็จ':shortMail(_sbMail)),
       '','sbLogout()','<span class="sgo">›</span>')
    +'</div></div>';
-  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.61 · '+(DEMO?'โหมดทดลอง':'ข้อมูลเก็บบนบัญชีของคุณ')+'</div>';
+  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.63 · '+(DEMO?'โหมดทดลอง':'ข้อมูลเก็บบนบัญชีของคุณ')+'</div>';
   document.getElementById('setBody').innerHTML=h;
 }
 function toggleAdv(){advOpen=!advOpen;buzz(8);renderSet();}
