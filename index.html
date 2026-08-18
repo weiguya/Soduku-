@@ -2058,6 +2058,25 @@ body.dark mark{background:rgba(90,175,240,.26)}
 .mkimg{width:100%;height:100%;object-fit:cover;display:block;border-radius:inherit;
   -webkit-user-select:none;user-select:none;pointer-events:none}
 </style>
+<style id="skin52">
+/* Ver.66 — [stated] "อยากให้เลื่อนได้อีก ... ปัดนิ้วดึงลงได้ ... พอปล่อยนิ้วก็รีเฟรช"
+   ดึงทั้งหน้าลงมา มีมาสคอตโผล่ขึ้นมาข้างหลัง — ทำทุกหน้า */
+body{overscroll-behavior-y:contain}
+.ptr{position:fixed;left:50%;top:0;z-index:60;width:44px;height:44px;margin-left:-22px;
+  border-radius:50%;overflow:hidden;background:#2F6DD0;
+  box-shadow:0 6px 18px -8px rgba(16,20,37,.5);
+  opacity:0;transform:translateY(-56px) scale(.7);pointer-events:none}
+.ptr img{width:100%;height:100%;object-fit:cover;display:block}
+.ptr.snap{transition:opacity .22s ease,transform .32s cubic-bezier(.2,.9,.3,1)}
+.ptr.spin img{animation:ptrspin .9s linear infinite}
+@keyframes ptrspin{to{transform:rotate(360deg)}}
+.page.ptrmove{will-change:transform}
+.page.ptrsnap{transition:transform .32s cubic-bezier(.2,.9,.3,1)}
+@media (prefers-reduced-motion: reduce){
+  .ptr,.page.ptrsnap{transition:none}
+  .ptr.spin img{animation:none}
+}
+</style>
 <style id="skin49">
 /* Ver.58 */
 /* [1] ปุ่มตาไปมุมขวาบนของการ์ดยอดเงิน ไม่เกาะข้างตัวเลขแล้ว */
@@ -2235,6 +2254,7 @@ body.dark mark{background:rgba(90,175,240,.26)}
   </div>
   <div class="shbody" id="shBody"></div>
 </div>
+<div class="ptr" id="ptr" aria-hidden="true"><img src="./mascot.png" alt=""></div>
 <div class="pwabar" id="pwaBar">
   <span class="pwt">ติดตั้ง Muifei ลงเครื่อง เปิดเร็วกว่าและไม่มีแถบเบราว์เซอร์</span>
   <button class="pwyes" onclick="pwaInstall()">ติดตั้ง</button>
@@ -3808,6 +3828,7 @@ function goTab(t){
   }else _goTab(t,true);
 }
 function _goTab(t,stag){
+  if(t!==curTab)tabHistPush(t);
   curTab=t;closeDial();
   if(t==='list')listShow=LIST_STEP;   /* Ver.22: เข้าหน้ารายการใหม่ เริ่มนับหนึ่งเสมอ */
   document.body.setAttribute('data-tab',t);   /* Ver.10: วอลเปเปอร์คนละชุดต่อหน้า */
@@ -4383,7 +4404,7 @@ function drawAccount(){
    +stat
    +'<div class="acrow"><span class="ack">รายการทั้งหมด</span><span class="acv">'+fmt(nEnt)+' รายการ</span></div>'
    +(first?'<div class="acrow"><span class="ack">จดมาตั้งแต่</span><span class="acv">'+esc(first)+'</span></div>':'')
-   +'<div class="acrow"><span class="ack">เวอร์ชัน</span><span class="acv">Muifei Ver.65</span></div>'
+   +'<div class="acrow"><span class="ack">เวอร์ชัน</span><span class="acv">Muifei Ver.66</span></div>'
    +'<div style="height:14px"></div>'
    +(DEMO?'':'<button class="btn btn-out" onclick="sheetPush(drawBackup)">สำรองข้อมูล และไฟล์ตาราง</button>')
    +'<div style="height:8px"></div>'
@@ -4474,12 +4495,16 @@ function closeSheet(force){
   _histOn=false;
 }
 function rePush(){try{history.pushState({sheet:1},'');_histOn=true;}catch(e){}}
-window.addEventListener('popstate',function(){
+window.addEventListener('popstate',function(ev){
   _histOn=false;
   if(document.getElementById('ask').classList.contains('on')){askClose(false);rePush();return;}
   if(document.getElementById('sheet').classList.contains('on')){
     if(sheetStack.length>1){sheetBack();rePush();return;}
-    _popping=true;closeSheet(true);_popping=false;}
+    _popping=true;closeSheet(true);_popping=false;return;}
+  var st=ev&&ev.state;
+  /* ต้องเรียก _goTab ตรงๆ ไม่ใช่ goTab — goTab ห่อด้วย startViewTransition ซึ่งเลื่อนการทำงาน
+     ออกไปหลัง finally ทำให้ _tabPop กลับเป็น false ก่อน แล้วมันจะ pushState ซ้ำจนกดย้อนไม่ไปไหน */
+  if(st&&st.tab&&st.tab!==curTab){ _tabPop=true; try{ _goTab(st.tab,true); }finally{ _tabPop=false; } }
 });
 /* ลากแถบขีดลงเพื่อปิด */
 (function(){
@@ -5284,7 +5309,7 @@ function renderSet(){
       DEMO?'ล้างข้อมูลตัวอย่างทิ้ง กลับไปจอเข้าสู่ระบบ':(_sbErr?'ซิงก์ล่าสุดไม่สำเร็จ':shortMail(_sbMail)),
       '','sbLogout()','<span class="sgo">›</span>')
    +'</div></div>';
-  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.65 · '+(DEMO?'โหมดทดลอง':'ข้อมูลเก็บบนบัญชีของคุณ')+'</div>';
+  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.66 · '+(DEMO?'โหมดทดลอง':'ข้อมูลเก็บบนบัญชีของคุณ')+'</div>';
   document.getElementById('setBody').innerHTML=h;
 }
 function toggleAdv(){advOpen=!advOpen;buzz(8);renderSet();}
@@ -5520,6 +5545,7 @@ function startApp(){
   seedInPins();
   _goTab('home',true);   /* Ver.27: เปิดแอปครั้งแรก ให้แถวไล่กันขึ้นมา ไม่ต้องผ่าน view transition */
   if(!D.setup)document.getElementById('first').classList.remove('hide');
+  tabHistInit();
 }
 sbBoot();
 
@@ -5536,6 +5562,79 @@ window.addEventListener('beforeinstallprompt',function(e){
   e.preventDefault(); _pwaEvt=e; pwaBarShow();
 });
 window.addEventListener('appinstalled',function(){ _pwaEvt=null; pwaBarHide(); });
+/* ================= Ver.66 — ดึงลงเพื่อรีเฟรช =================
+   เกี่ยวข้องเฉพาะตอนอยู่สุดหัวจริงๆ และนิ้วลากลงมากกว่าลากข้าง
+   จึงไม่ชนกับปัดลบของแถวรายการ และปิดไว้ตอนชีทเปิดหรือกำลังลากชิป */
+(function(){
+  var el=null,y0=0,x0=0,pull=0,on=false,live=false,busy=false;
+  var MAXP=104, TRIG=62;
+  function box(){ return document.getElementById('ptr'); }
+  function page(){ return document.querySelector('.page:not(.off)'); }
+  function put(px){
+    var b=box(); if(!b)return;
+    var k=Math.min(1,px/TRIG);
+    b.style.opacity=k;
+    b.style.transform='translateY('+(px*0.72)+'px) scale('+(0.7+0.3*k)+') rotate('+(px*2.2)+'deg)';
+    if(el)el.style.transform='translateY('+px+'px)';
+  }
+  function reset(snap){
+    var b=box();
+    if(b){ b.classList.add('snap'); b.classList.remove('spin');
+           b.style.opacity=0; b.style.transform='translateY(-56px) scale(.7)'; }
+    if(el){ el.classList.add('ptrsnap'); el.style.transform=''; }
+    var e=el; el=null; pull=0; on=false; live=false;
+    setTimeout(function(){ if(e){e.classList.remove('ptrsnap','ptrmove');e.style.transform='';}
+                           if(b)b.classList.remove('snap'); },340);
+  }
+  function fire(){
+    busy=true;
+    var b=box();
+    if(b){ b.classList.add('snap','spin'); b.style.opacity=1;
+           b.style.transform='translateY(46px) scale(1)'; }
+    if(el){ el.classList.add('ptrsnap'); el.style.transform='translateY(56px)'; }
+    var done=function(){ busy=false; reset(true); };
+    var job;
+    try{ job=(!DEMO&&_sbUid)?sbPull():Promise.resolve(); }catch(e){ job=Promise.resolve(); }
+    job['catch'](function(){}).then(function(){
+      try{ render(); }catch(e){}
+      setTimeout(done,420);
+    });
+  }
+  document.addEventListener('touchstart',function(e){
+    if(busy||e.touches.length!==1)return;
+    if(document.getElementById('sheet').classList.contains('on'))return;
+    if(document.getElementById('ask').classList.contains('on'))return;
+    if((window.scrollY||document.documentElement.scrollTop||0)>0)return;
+    el=page(); if(!el)return;
+    y0=e.touches[0].clientY; x0=e.touches[0].clientX; pull=0; on=true; live=false;
+  },{passive:true});
+  document.addEventListener('touchmove',function(e){
+    if(!on||busy)return;
+    var dy=e.touches[0].clientY-y0, dx=e.touches[0].clientX-x0;
+    if(!live){
+      if(dy<6||Math.abs(dy)<Math.abs(dx)*1.4){ if(dy<0){on=false;} return; }
+      live=true; if(el)el.classList.add('ptrmove');
+    }
+    if(dy<=0){ put(0); return; }
+    e.preventDefault();
+    pull=MAXP*(1-Math.exp(-dy/150));   /* ยิ่งดึงยิ่งหนืด ไม่ชนเพดานแข็ง */
+    put(pull);
+  },{passive:false});
+  function up(){
+    if(!on||busy)return;
+    if(live&&pull>=TRIG){ fire(); return; }
+    reset(false);
+  }
+  document.addEventListener('touchend',up,{passive:true});
+  document.addEventListener('touchcancel',up,{passive:true});
+})();
+
+/* ================= Ver.66 — ปุ่มย้อนกลับของเครื่อง =================
+   ของเดิมปิดชีทได้อย่างเดียว กดต่อคือออกจากแอป — ตอนนี้กลับหน้าก่อนแทน
+   ใช้ history เส้นเดียวกับชีท: state.sheet จัดการโดยตัวเดิม ส่วน state.tab เพิ่มใหม่ */
+var _tabPop=false;
+function tabHistInit(){ try{ history.replaceState({tab:curTab||'home'},''); }catch(e){} }
+function tabHistPush(t){ if(_tabPop)return; try{ history.pushState({tab:t},''); }catch(e){} }
 function pwaDismissed(){ try{ return LS.getItem('pwa_hide')==='1'; }catch(e){ return false; } }
 function pwaBarShow(){
   if(pwaDismissed())return;
