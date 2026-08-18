@@ -2023,8 +2023,8 @@ body.dark mark{background:rgba(90,175,240,.26)}
 .cico.lg svg{width:17px;height:17px}
 .rc .cico{margin-right:6px;flex:0 0 18px;width:18px;height:18px;border-radius:6px}
 .rc .cico svg{width:11.5px;height:11.5px}
-/* Ver.59: ในชิป ไอคอนต้องแทน "จุดสี" ไม่ใช่แทน "การ์ดไอคอน" — กระเบื้องสีทำให้ชิปยาวผิดรูป
-   เหลือแต่เส้นไอคอนสีหมวด กว้างเท่าจุดเดิม ชิปจึงยาวเท่าเดิม */
+/* Ver.60: [stated] ชิปซื้อประจำ "เอาไอคอนออก ไม่ต้องทำสีด้วย" — ชิปเป็นแค่ปุ่มลัด
+   ไม่ใช่ป้ายบอกหมวด กฎด้านล่างจึงเหลือใช้กับชิปอื่น (เลือกหมวด) เท่านั้น */
 .chip .cico{background:none!important;margin-right:5px;flex:0 0 15px;width:15px;height:15px;border-radius:0}
 .chip .cico svg{width:15px;height:15px;stroke-width:1.9}
 /* ตารางเลือกไอคอนในหน้าแก้หมวด */
@@ -4301,7 +4301,7 @@ function drawAccount(){
    +stat
    +'<div class="acrow"><span class="ack">รายการทั้งหมด</span><span class="acv">'+fmt(nEnt)+' รายการ</span></div>'
    +(first?'<div class="acrow"><span class="ack">จดมาตั้งแต่</span><span class="acv">'+esc(first)+'</span></div>':'')
-   +'<div class="acrow"><span class="ack">เวอร์ชัน</span><span class="acv">Muifei Ver.59</span></div>'
+   +'<div class="acrow"><span class="ack">เวอร์ชัน</span><span class="acv">Muifei Ver.60</span></div>'
    +'<div style="height:14px"></div>'
    +(DEMO?'':'<button class="btn btn-out" onclick="sheetPush(drawBackup)">สำรองข้อมูล และไฟล์ตาราง</button>')
    +'<div style="height:8px"></div>'
@@ -4649,9 +4649,8 @@ function pinBodyHtml(pins){
     return '<div class="hintline" style="padding:0">ยังไม่มีชิปฝั่งนี้ กด จัดชิป เพื่อเพิ่มจากรายการที่พิมไว้</div>';
   return '<div class="chipwrap pinwrap'+(man?' managing':'')+'" id="pinWrap">'
    +pins.map(function(p,i){
-      var col=catColor(p.cat,p.type||'out');
       return '<button class="chip pin" data-pi="'+i+'"'
-       +(man?'':' onclick="useFormPin('+i+',this)"')+'>'+catIcoTile(p.cat,p.type||'out')+esc(p.n)
+       +(man?'':' onclick="useFormPin('+i+',this)"')+'>'+esc(p.n)
        +(man?'<span class="px" onclick="event.stopPropagation();askDelPin('+i+')">✕</span>':'')
        +'</button>';}).join('')
    +(man?'<button class="chip padd" onclick="askAddPins()">＋ เพิ่มชิป</button>':'')
@@ -5202,7 +5201,7 @@ function renderSet(){
       DEMO?'ล้างข้อมูลตัวอย่างทิ้ง กลับไปจอเข้าสู่ระบบ':(_sbErr?'ซิงก์ล่าสุดไม่สำเร็จ':shortMail(_sbMail)),
       '','sbLogout()','<span class="sgo">›</span>')
    +'</div></div>';
-  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.59 · '+(DEMO?'โหมดทดลอง':'ข้อมูลเก็บบนบัญชีของคุณ')+'</div>';
+  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.60 · '+(DEMO?'โหมดทดลอง':'ข้อมูลเก็บบนบัญชีของคุณ')+'</div>';
   document.getElementById('setBody').innerHTML=h;
 }
 function toggleAdv(){advOpen=!advOpen;buzz(8);renderSet();}
