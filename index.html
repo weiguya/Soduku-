@@ -2048,6 +2048,27 @@ body.dark mark{background:rgba(90,175,240,.26)}
   mask-composite:exclude;pointer-events:none}
 .who.demo .wav:after,.who.warn .wav:after{background:none;box-shadow:0 0 0 2px var(--out) inset}
 </style>
+<style id="skin49">
+/* Ver.58 */
+/* [1] ปุ่มตาไปมุมขวาบนของการ์ดยอดเงิน ไม่เกาะข้างตัวเลขแล้ว */
+.hero{position:relative}
+.hero .eyebtn{position:absolute;top:8px;right:8px;width:34px;height:34px}
+.balwrap{display:block}
+/* [3] สามช่องหรือสองช่อง กว้างเท่ากันเสมอ — ไม่ให้สองช่องยืดเต็มจอ */
+#chSel2 .msel{flex:0 0 calc((100% - 16px)/3)}
+/* [4] เฉลี่ยต่อวันย้ายมาอยู่ใต้ชื่อหมวดในการ์ดโดนัท ตัวเล็กกว่าชื่อหมวด */
+.crow{align-items:flex-start}
+.crow .cnm{display:block}
+.crow .cnm{flex:1;min-width:0}
+.crow .cnm b,.crow .cnm i{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.crow .cnm b{font-weight:500;font-size:14px;line-height:1.35}
+.crow .cnm i{font-style:normal;font-size:10.5px;color:var(--ink3);line-height:1.3;
+  font-variant-numeric:tabular-nums}
+.crow .cam,.crow .cpc{align-self:center}
+/* [5] การ์ดรับ/จ่ายเดือนนี้กดได้ */
+.tile.tap{cursor:pointer;-webkit-tap-highlight-color:transparent}
+.tile.tap:active{transform:scale(.985)}
+</style>
 </head>
 <body>
 <div class="wall"><i class="w1"></i><i class="w2"></i><i class="w3"></i></div>
@@ -2065,14 +2086,12 @@ body.dark mark{background:rgba(90,175,240,.26)}
   <div class="bento">
     <section class="hero tile wide">
       <div class="lb">เงินที่มีอยู่ตอนนี้</div>
-      <div class="balwrap">
-        <div class="amt" id="balNum"><span class="bt">฿</span>0</div>
-        <button class="eyebtn" id="eyeBtn" onclick="toggleBal()" aria-label="ดูยอดเงิน"></button>
-      </div>
+      <button class="eyebtn" id="eyeBtn" onclick="toggleBal()" aria-label="ดูยอดเงิน"></button>
+      <div class="balwrap"><div class="amt" id="balNum"><span class="bt">฿</span>0</div></div>
       <div class="foot" id="heroFoot"></div>
     </section>
-    <div class="tile tabtop" style="--tabc:var(--in)"><div class="tk">รับเดือนนี้</div><div class="tv i" id="mIn">0</div><div class="tsub" id="mInSub"></div></div>
-    <div class="tile tabtop" style="--tabc:var(--out)"><div class="tk">จ่ายเดือนนี้</div><div class="tv o" id="mOut">0</div><div class="tsub" id="mOutSub"></div></div>
+    <div class="tile tabtop tap" onclick="goMonthList('in')" style="--tabc:var(--in)"><div class="tk">รับเดือนนี้</div><div class="tv i" id="mIn">0</div><div class="tsub" id="mInSub"></div></div>
+    <div class="tile tabtop tap" onclick="goMonthList('out')" style="--tabc:var(--out)"><div class="tk">จ่ายเดือนนี้</div><div class="tv o" id="mOut">0</div><div class="tsub" id="mOutSub"></div></div>
   </div>
 
   <section class="card">
@@ -2086,12 +2105,6 @@ body.dark mark{background:rgba(90,175,240,.26)}
     <div class="ct"><h2 id="sumTitle">จ่ายไปกับอะไร</h2><span class="sub" id="sumSub"></span></div>
     <div class="selrow" id="sumSel"></div>
     <div id="sumBody"></div>
-  </section>
-
-  <section class="card">
-    <div class="ct"><h2>เฉลี่ยต่อวัน</h2><span class="sub" id="avgSub"></span></div>
-    <div class="selrow" id="avgSel"></div>
-    <div id="avgBody"></div>
   </section>
 
   <div class="sechd"><h2>รายการล่าสุด</h2><span class="sub" id="recentR"></span></div>
@@ -3296,7 +3309,7 @@ function renderTrend(){
 function thShort(k){var dt=parseKey(k);return dt.getDate()+' '+MTHS[dt.getMonth()];}
 
 /* ================= สรุปเดือน ================= */
-var sumSide='out',sumPeriod='cur';
+var sumSide='out',sumPeriod='all';
 function sumMonths(){
   var m={},i;
   for(i=0;i<D.entries.length;i++)m[monthOf(D.entries[i].date)]=1;
@@ -3338,9 +3351,19 @@ function renderSummary(){
       +'style="transition-delay:'+(_fxDonut?_dsi*90:0)+'ms" stroke-dashoffset="'+(-off)+'"></circle>';
     _dsi++;
     off+=C*frac;});
+  /* Ver.58: [stated] ยุบการ์ด เฉลี่ยต่อวัน มาไว้ใต้ชื่อหมวด ตัวเล็กกว่า และตามฟิลเตอร์เดียวกัน
+     หารด้วยจำนวนวันที่หมวดนั้นมีรายการจริง แบบเดียวกับการ์ดเฉลี่ยต่อวันเดิม */
+  var dayN={};
+  D.entries.forEach(function(e){
+    if(e.type!==side)return;
+    if(per!=='all'&&monthOf(e.date)!==ym)return;
+    if(!dayN[e.cat])dayN[e.cat]={};
+    dayN[e.cat][e.date]=1;});
   var rows=ks.slice(0,5).map(function(k){
+    var dn=Object.keys(dayN[k]||{}).length||1,per1=Math.round(by[k]/dn);
     return '<div class="crow">'+catIcoTile(k,side)
-     +'<span class="cnm">'+esc(k)+'</span><span class="cam">'+fmt(by[k])+'</span>'
+     +'<span class="cnm"><b>'+esc(k)+'</b><i>'+fmt(per1)+'/วัน</i></span>'
+     +'<span class="cam">'+fmt(by[k])+'</span>'
      +'<span class="cpc">'+Math.round(by[k]/tot*100)+'%</span></div>';}).join('');
   document.getElementById('sumBody').innerHTML=
    '<div class="donutwrap"><div class="donut"><svg width="110" height="110">'
@@ -3619,7 +3642,8 @@ function countTo(el,from,to,pre){
 var _balShown=false;
 var EYE_ON='<svg viewBox="0 0 24 24"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="3"/></svg>';
 var EYE_OFF='<svg viewBox="0 0 24 24"><path d="M4 4.5 20 20M9.5 6.1A9.6 9.6 0 0 1 12 5.5c6 0 9.5 6.5 9.5 6.5a17 17 0 0 1-3.3 3.9M6.4 8.3A17.4 17.4 0 0 0 2.5 12S6 18.5 12 18.5c1 0 1.9-.2 2.7-.5"/><path d="M10 10a3 3 0 0 0 4 4"/></svg>';
-function maskAmt(t){ return String(t).replace(/\d/g,'•'); }
+/* Ver.58: [stated] ใช้ x,xxx ดีกว่าจุด — คงคอมมาไว้ จำนวนหลักจึงยังอ่านออก */
+function maskAmt(t){ return String(t).replace(/\d/g,'x'); }
 function toggleBal(){
   _balShown=!_balShown; buzz(8);
   _lastBal=balance();      /* กลับมาเปิดอย่าให้นับขึ้นใหม่จาก 0 */
@@ -3742,6 +3766,7 @@ function avgDelta(cur,prev){
 }
 function setAvgRange(r){avgRange=r;mselCloseAll();renderAvg();buzz(8);}
 function renderAvg(){
+  /* Ver.58: การ์ดนี้ถูกยุบเข้ากับการ์ดโดนัทแล้ว ฟังก์ชันคงไว้เฉยๆ จะได้ไม่ต้องไล่คนเรียกทั้งแอป */
   var w=avgWindow(avgRange),body=document.getElementById('avgBody');
   if(!body)return;
   document.getElementById('avgSel').innerHTML=mselHtml('avg',avgRange,
@@ -3918,6 +3943,12 @@ function renderList(){
 function listMore(){listShow+=LIST_STEP;renderList();buzz(8);}
 function setFilter(i){curFilter=i<0?'':(window._chipKeys[i]||'');listShow=LIST_STEP;renderList();fxStag('fullList');buzz(8);}
 function setFilterS(i){setFilter(+i);}
+/* Ver.58: [stated] กดการ์ดรับ/จ่ายเดือนนี้ แล้วพาไปที่ต้นตอฝั่งรายการ
+   ตั้งเดือนกลับมาที่เดือนปัจจุบันเสมอ เพราะตัวเลขบนการ์ดคือยอดของเดือนนี้ */
+function goMonthList(t){
+  curMonth=monthOf(today()); curFilter=''; curType=t; listShow=LIST_STEP;
+  goTab('list'); buzz(8);
+}
 function setTypeFilter(t){
   curType=(curType===t?'':t);   /* แตะซ้ำที่เดิม = เอาฟิลเตอร์ออก */
   curFilter='';listShow=LIST_STEP;
@@ -4255,7 +4286,7 @@ function drawAccount(){
    +stat
    +'<div class="acrow"><span class="ack">รายการทั้งหมด</span><span class="acv">'+fmt(nEnt)+' รายการ</span></div>'
    +(first?'<div class="acrow"><span class="ack">จดมาตั้งแต่</span><span class="acv">'+esc(first)+'</span></div>':'')
-   +'<div class="acrow"><span class="ack">เวอร์ชัน</span><span class="acv">Muifei Ver.57</span></div>'
+   +'<div class="acrow"><span class="ack">เวอร์ชัน</span><span class="acv">Muifei Ver.58</span></div>'
    +'<div style="height:14px"></div>'
    +(DEMO?'':'<button class="btn btn-out" onclick="sheetPush(drawBackup)">สำรองข้อมูล และไฟล์ตาราง</button>')
    +'<div style="height:8px"></div>'
@@ -4605,7 +4636,7 @@ function pinBodyHtml(pins){
    +pins.map(function(p,i){
       var col=catColor(p.cat,p.type||'out');
       return '<button class="chip pin" data-pi="'+i+'"'
-       +(man?'':' onclick="useFormPin('+i+',this)"')+'>'+catDot(col)+esc(p.n)
+       +(man?'':' onclick="useFormPin('+i+',this)"')+'>'+catIcoTile(p.cat,p.type||'out')+esc(p.n)
        +(man?'<span class="px" onclick="event.stopPropagation();askDelPin('+i+')">✕</span>':'')
        +'</button>';}).join('')
    +(man?'<button class="chip padd" onclick="askAddPins()">＋ เพิ่มชิป</button>':'')
@@ -5156,7 +5187,7 @@ function renderSet(){
       DEMO?'ล้างข้อมูลตัวอย่างทิ้ง กลับไปจอเข้าสู่ระบบ':(_sbErr?'ซิงก์ล่าสุดไม่สำเร็จ':shortMail(_sbMail)),
       '','sbLogout()','<span class="sgo">›</span>')
    +'</div></div>';
-  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.57 · '+(DEMO?'โหมดทดลอง':'ข้อมูลเก็บบนบัญชีของคุณ')+'</div>';
+  h+='<div class="hintline" style="text-align:center;padding:2px 0 24px;color:var(--ink3)">Muifei Ver.58 · '+(DEMO?'โหมดทดลอง':'ข้อมูลเก็บบนบัญชีของคุณ')+'</div>';
   document.getElementById('setBody').innerHTML=h;
 }
 function toggleAdv(){advOpen=!advOpen;buzz(8);renderSet();}
