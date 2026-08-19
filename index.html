@@ -2210,6 +2210,23 @@ body.dark .ptr{background:var(--card2)}
 .tile.tabtop::after{opacity:.16}
 .tile.tabtop::before{opacity:1;clip-path:inset(calc(100% * (1 - var(--tabf,1))) 0 0 0)}
 </style>
+<style id="skin57">
+/* ============================================================
+   Ver.72 — ขีดสีของช่องรับ/จ่าย จบที่ตรงนี้
+   [stated] "จำแบบเดิม ที่ขีดเขียว แดง อยู่ข้างบนได้มั้ย นั่นแหละ อันนั้นเลย แค่ย้ายมาข้างๆ จบ"
+   แล้ว [stated] "ทำให้เส้นยาวโดยไม่ขยับเข้ามา" → เลือกลดความมนของช่องนี้
+
+   ขีดเดิมเป๊ะ: ทึบล้วน 3px opacity .85 ชิดขอบ เต็มความสูง แค่เปลี่ยนจากขอบบนเป็นขอบซ้าย
+   ไม่มีราง ไม่มีจาง ไม่มีสัดส่วน ไม่มีเส้นโค้ง — ของพวกนั้นตกไปหมด
+   ตัวที่กินปลายเส้นคือมุมมนของการ์ด จึงลดมนเฉพาะช่องนี้ 20 → 12
+   เส้นยาว 49 → 61 จาก 71px โดยขีดยังชิดขอบเหมือนเดิม
+   ============================================================ */
+.tile.tabtop{border-radius:12px;padding:12px 13px}
+.tile.tabtop::before{display:none}
+.tile.tabtop::after{content:"";position:absolute;top:0;left:0;bottom:0;right:auto;
+  width:3px;height:auto;border:0;border-radius:0;clip-path:none;
+  background:var(--tabc,var(--accent));opacity:.85}
+</style>
 <link rel="manifest" href="./manifest.webmanifest">
 <meta name="theme-color" content="#1752B6">
 <meta name="mobile-web-app-capable" content="yes">
@@ -3888,13 +3905,6 @@ function renderHome(){
   var net=s['in']-s.out;
   document.getElementById('mInSub').textContent='';
   document.getElementById('mOutSub').textContent='';
-  /* Ver.69: [stated] "ใส่ลวดลายหรือดีไซน์ให้ดูดีกว่านี้ จืดและทื่อไป"
-     รางสีข้างซ้ายยาวตามสัดส่วนของเงินที่ขยับทั้งเดือน — ลายที่บอกอะไรได้
-     ขั้นต่ำ 0.14 เพื่อไม่ให้ฝั่งที่น้อยมากกลายเป็นจุดเดียวจนดูเหมือนเสีย */
-  var _mv=s['in']+s.out;
-  var _fi=_mv?Math.max(.14,s['in']/_mv):1, _fo=_mv?Math.max(.14,s.out/_mv):1;
-  document.getElementById('mIn').parentNode.style.setProperty('--tabf',_fi.toFixed(3));
-  document.getElementById('mOut').parentNode.style.setProperty('--tabf',_fo.toFixed(3));
   document.getElementById('heroFoot').textContent=n
     ? (net>=0?'เดือนนี้เหลือ ':'เดือนนี้ติดลบ ')+(_balShown?fmt(Math.abs(net)):maskAmt(fmt(Math.abs(net))))
     : 'ยังไม่มีรายการในเดือนนี้';
